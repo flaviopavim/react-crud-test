@@ -18,12 +18,16 @@ const App = () => {
       <Top />
       <Router>
         <Route path="/" exact render={(props) => <ListDev />} />
-        <Route path="/list/level" render={(props) => <ListLevel />} />
-        <Route path="/search/level/:search" render={(props) => <ListLevel />} />
+        <Route path="/list/level" exact render={(props) => <ListLevel />} />
+        <Route path="/list/level/:pgn" exact render={(props) => <ListLevel />} />
+        <Route path="/search/level/:search" exact render={(props) => <ListLevel />} />
+        <Route path="/search/level/:search/:pgn" exact render={(props) => <ListLevel />} />
         <Route path="/create/level" render={(props) => <CreateLevel />} />
         <Route path="/edit/level/:id" render={(props) => <EditLevel />} />
-        <Route path="/list/dev" render={(props) => <ListDev />} />
-        <Route path="/search/dev/:search" render={(props) => <ListDev />} />
+        <Route path="/list/dev" exact render={(props) => <ListDev />} />
+        <Route path="/list/dev/:pgn" exact render={(props) => <ListDev />} />
+        <Route path="/search/dev/:search" exact render={(props) => <ListDev />} />
+        <Route path="/search/dev/:search/:pgn" exact render={(props) => <ListDev />} />
         <Route path="/create/dev" render={(props) => <CreateDev />} />
         <Route path="/edit/dev/:id" render={(props) => <EditDev />} />
       </Router>

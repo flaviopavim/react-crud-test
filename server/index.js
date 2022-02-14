@@ -40,7 +40,7 @@ const levels = [
 /////////////////////////////////
 
 //lista todos os devs
-app.get("/api/list/dev", (req, res) => {
+app.get("/api/list/dev/:pgn", (req, res) => {
     //lista todos os devs com seus níveis
     db.query(`
     SELECT 
@@ -51,6 +51,7 @@ app.get("/api/list/dev", (req, res) => {
         dev d 
             LEFT JOIN level l ON l.id=d.level 
     ORDER BY d.id DESC
+    LIMIT ${req.params.pgn},10
     `, (err, result) => {
         if (err) {
             console.log(err)
@@ -61,8 +62,23 @@ app.get("/api/list/dev", (req, res) => {
 });
 
 //busca por devs
-app.get("/api/search/dev/:search", (req, res) => {
-    db.query(`SELECT * FROM dev WHERE name LIKE '%`+req.params.search+`%' ORDER BY id DESC`, (err, result) => {
+app.get("/api/search/dev/:search/:pgn", (req, res) => {
+    db.query(`
+    SELECT 
+        d.id,
+        d.name,
+        l.name AS level,
+        d.description
+    FROM 
+        dev d
+            LEFT JOIN level l ON l.id=d.level
+    WHERE 
+        d.name LIKE '%${req.params.search}%' OR
+        d.description LIKE '%${req.params.search}%' OR
+        l.name LIKE '%${req.params.search}%'
+    ORDER BY d.id DESC
+    LIMIT ${req.params.pgn},10
+    `, (err, result) => {
         if (err) {
             console.log(err)
         }
@@ -143,9 +159,20 @@ app.delete('/api/delete/dev/:id', (req, res) => {
 /////////////////////////////////
 
 //lista todos os níveis
-app.get("/api/list/level", (req, res) => {
+app.get("/api/list/level/:pgn", (req, res) => {
     //se não houver erro, lista todos os níveis
-    db.query(`SELECT * FROM level ORDER BY id DESC`, (err, result) => {
+    let limit=''
+    if (req.params.pgn!='all') {
+        limit=`LIMIT ${req.params.pgn},10`
+    }
+    db.query(`
+    SELECT 
+        * 
+    FROM 
+        level 
+    ORDER BY id DESC
+    ${limit}
+    `, (err, result) => {
         if (err) {
             console.log(err)
         }
@@ -154,7 +181,7 @@ app.get("/api/list/level", (req, res) => {
 });
 
 //busca
-app.get("/api/search/level/:search", (req, res) => {
+app.get("/api/search/level/:search/:pgn", (req, res) => {
     db.query(`
     SELECT 
         * 
@@ -164,6 +191,7 @@ app.get("/api/search/level/:search", (req, res) => {
         name LIKE '%`+req.params.search+`%' OR 
         description LIKE '%`+req.params.search+`%' 
     ORDER BY id DESC
+    LIMIT ${req.params.pgn},10
     `, (err, result) => {
         if (err) {
             console.log(err)
@@ -287,6 +315,7 @@ app.listen(PORT, () => {
                 //se não houver dados
                 if (result.length === 0) {
                     //insere os devs de demonstração
+                    devs.reverse()
                     devs.forEach(dev => {
                         db.query(`INSERT INTO dev (name, level, description) VALUES ('${dev.name}', '${dev.level}', '${dev.description}')`, (err, result) => {
                             if (err) {
@@ -295,6 +324,7 @@ app.listen(PORT, () => {
                         })
                     })
                     //insere os níveis de demonstração
+                    levels.reverse()
                     levels.forEach(level => {   
                         db.query(`INSERT INTO level (name, description) VALUES ('${level.name}', '${level.description}')`, (err, result) => {
                             if (err) {

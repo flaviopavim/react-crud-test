@@ -15,20 +15,24 @@ function EditDev() {
     })
 
     const [levels, setLevels] = useState([])
+    const [level_id, setLevelID] = useState(0)
 
     useEffect(() => {
         const id = window.location.href.split('/')[5]
         Axios.get('http://localhost:3002/api/dev/' + id)
             .then(response => {
                 setDev(response.data[0])
-                Axios.get('http://localhost:3002/api/list/level').then(response => {
+                Axios.get('http://localhost:3002/api/list/level/all').then(response2 => {
                     setLevels([]);
-                    response.data.forEach(level => {
+                    response2.data.forEach(level => {
                         console.log(level)
                         setLevels(levels => [...levels, { value: level.id, label: level.name }])
-                        if (level.name == dev.level) {
-                            setDev({ ...dev, level: level.id })
+
+                        //seleciona o level
+                        if (level.name == response.data[0].level) {
+                            setLevelID(level.id)
                         }
+
                     })
                 })
             })
@@ -40,6 +44,11 @@ function EditDev() {
             ...dev,
             [event.target.name]: event.target.value
         })
+        //set level id
+        if (event.target.name == 'level') {
+            setLevelID(event.target.value)
+        }
+        
     }
 
     function handleSubmit(event) {
@@ -47,7 +56,7 @@ function EditDev() {
         console.log(dev)
         const id = window.location.href.split('/')[5]
         Axios.post('http://localhost:3002/api/edit/dev/'+id, 
-            { name: dev.name, level: dev.level, description: dev.description }
+            { name: dev.name, level: level_id, description: dev.description }
         )
         history.push("/")
     } 
@@ -61,7 +70,7 @@ function EditDev() {
                 </div>
                 <div className="form-group">
                     <label>Nível:</label>
-                    <select className="form-control" name="level" value={dev.level} onChange={handleChange}>
+                    <select className="form-control" name="level" value={level_id} onChange={handleChange}>
                         {
                             levels.map(level => {
                                 return <option key={level.value} value={level.value}>{level.label}</option>

@@ -7,22 +7,28 @@ function ListDev() {
     let history = useHistory();
 
     const [devList, setDevList] = useState([]);
+    const [search, setSearch] = useState({
+        search: ''
+    });
 
     useEffect(() => {
-        //if page == search
         let action = history.location.pathname.split("/")[1];
         let table = history.location.pathname.split("/")[2];
         let search = history.location.pathname.split("/")[3];
+        let page = history.location.pathname.split("/")[4];
         console.log(search);
         if (action=='search' && table=='dev' && typeof search!=undefined) {
-            
-            fetch(`http://localhost:3002/api/search/dev/${search}`)
+            setSearch({search: search})
+            if (typeof page==undefined) {
+                page = 1;
+            }
+            fetch(`http://localhost:3002/api/search/dev/${search}/${page}`)
                 .then(res => res.json())
                 .then(data => {
                     setDevList(data);
                 })
         } else {
-            fetch("http://localhost:3002/api/list/dev")
+            fetch("http://localhost:3002/api/list/dev/1")
                 .then(response => response.json())
                 .then(data => {
                 setDevList(data);
@@ -33,22 +39,20 @@ function ListDev() {
     function handleDelete(id) {
         fetch(`http://localhost:3002/api/delete/dev/${id}`, {
             method: 'DELETE'
+        }).then(res => {
+            fetch("http://localhost:3002/api/list/dev/1")
+                .then(response => response.json())
+                .then(data => {
+                    setDevList(data);
+            });   
         })
-        fetch("http://localhost:3002/api/list/dev")
-            .then(response => response.json())
-            .then(data => {
-                setDevList(data);
-        });   
+        
     }
 
     function handleEdit(id) {
         history.push('/edit/dev/'+id);
     }
 
-
-    const [search, setSearch] = useState({
-        search: ''
-    });
     function handleChange(event) {
         event.preventDefault()
         setSearch({
@@ -60,7 +64,7 @@ function ListDev() {
     function handleSearch(event) {
         event.preventDefault()
         console.log(search)
-        history.push('/search/dev/'+search.search)
+        history.push('/search/dev/'+search.search+'/1')
     }
 
     return (
@@ -80,7 +84,6 @@ function ListDev() {
                         <div className="spaceLabel"></div>
                         <button onClick={handleSearch} type="submit" className="btn btn-block btn-default">Pesquisar</button>
                     </div>
-
                 </div>
             </form>
 
