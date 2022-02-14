@@ -47,7 +47,6 @@ app.get("/api/list/level", (req, res) => {
         db.query(`SELECT * FROM level ORDER BY id DESC`, (err, result) => {
             if (err) throw err;
             if (result.length === 0) {
-                //foreach levels
                 levels.forEach(level => {   
                     db.query(`INSERT INTO level (name, description) VALUES ('${level.name}', '${level.description}')`, (err, result) => {
                         if (err) throw err;
