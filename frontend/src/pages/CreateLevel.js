@@ -10,7 +10,6 @@ function CreateLevel() {
 
     const [level, setLevel] = useState({
         name: '',
-        level: 0,
         description: ''
     })
 
@@ -25,7 +24,7 @@ function CreateLevel() {
         event.preventDefault()
         console.log(level)
         Axios.post('http://localhost:3002/api/create/level', 
-            { name: level.name, level: level.level, description: level.description }
+            { name: level.name, description: level.description }
         )
         history.push("/list/level")
     }
@@ -36,10 +35,6 @@ function CreateLevel() {
             <div className="form-group">
                     <label>Título do nível:</label>
                     <input className="form-control" type="text" name="name" value={level.name} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                    <label>Nível:</label>
-                    <input className="form-control" type="number" name="level" value={level.level} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label>Descrição:</label>

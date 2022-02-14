@@ -29,7 +29,7 @@ function CreateDev() {
         event.preventDefault()
         console.log(dev)
         Axios.post('http://localhost:3002/api/create/dev', 
-            { name: dev.name, level: dev.level, description: dev.description }
+            { name: dev.name, description: dev.description }
         )
         history.push("/")
     }
@@ -40,9 +40,6 @@ function CreateDev() {
             response.data.forEach(level => {
                 console.log(level)
                 setLevels(levels => [...levels, { value: level.id, label: level.name }])
-                if (level.id == dev.level) {
-                    setDev({ ...dev, level: level.id })
-                }
             })
         })
     }, [])

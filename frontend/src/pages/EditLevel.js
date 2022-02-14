@@ -8,7 +8,6 @@ function EditLevel() {
 
     const [level, setDev] = useState({
         name: '',
-        level: '',
         description: ''
     })
 
@@ -42,10 +41,6 @@ function EditLevel() {
             <div className="form-group">
                     <label>Título do nível:</label>
                     <input className="form-control" type="text" name="name" value={level.name} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                    <label>Nível:</label>
-                    <input className="form-control" type="number" name="level" value={level.level} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label>Descrição:</label>

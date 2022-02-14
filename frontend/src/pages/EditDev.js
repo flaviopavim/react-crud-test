@@ -14,9 +14,7 @@ function EditDev() {
         description: ''
     })
 
-    const [levels, setLevels] = useState([
-
-    ])
+    const [levels, setLevels] = useState([])
 
     useEffect(() => {
         const id = window.location.href.split('/')[5]
@@ -28,7 +26,7 @@ function EditDev() {
                     response.data.forEach(level => {
                         console.log(level)
                         setLevels(levels => [...levels, { value: level.id, label: level.name }])
-                        if (level.id == dev.level) {
+                        if (level.name == dev.level) {
                             setDev({ ...dev, level: level.id })
                         }
                     })
@@ -73,7 +71,7 @@ function EditDev() {
                 </div>
                 <div className="form-group">
                     <label>Descrição:</label>
-                    <input className="form-control" type="text" name="description" value={dev.description} onChange={handleChange} />
+                    <textarea className="form-control" name="description" value={dev.description} onChange={handleChange} />
                 </div>
                 <input className="btn btn-success right" type="submit" value="Editar desenvolvedor" />
             </form>
