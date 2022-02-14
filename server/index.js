@@ -121,7 +121,7 @@ app.get("/api/list/dev", (req, res) => {
         PRIMARY KEY (id)
     )`, (err, result) => {
         if (err) throw err;
-        db.query(`SELECT d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level ORDER BY d.id DESC`, (err, result) => {
+        db.query(`SELECT d.id,d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level ORDER BY d.id DESC`, (err, result) => {
             if (err) throw err;
             if (result.length === 0) {
                 devs.forEach(dev => {
@@ -134,7 +134,7 @@ app.get("/api/list/dev", (req, res) => {
                         if (err) throw err;
                     })
                 })
-                db.query(`SELECT d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level ORDER BY d.id DESC`, (err, result) => {
+                db.query(`SELECT d.id,d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level ORDER BY d.id DESC`, (err, result) => {
                     if (err) throw err;
                     res.send(result)
                 })
@@ -148,7 +148,7 @@ app.get("/api/list/dev", (req, res) => {
 
 app.get("/api/dev/:id", (req, res) => {
     const id = req.params.id;
-    db.query("SELECT d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level WHERE d.id = ?", id, (err, result) => {
+    db.query("SELECT d.id,d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level WHERE d.id = ?", id, (err, result) => {
         if (err) {
             console.log(err)
         }

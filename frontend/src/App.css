@@ -48,8 +48,31 @@ h1 {
   border: 1px solid #ccc;
   background-color: #f1f1f1;
   padding: 15px;
+  position: relative;
 }
+
+.box .glyphicon {
+  font-size: 16px;
+  position: absolute;
+  cursor: pointer;
+}
+.box .glyphicon-remove {
+  right: 10px;
+  top: 10px;
+}
+.box .glyphicon-remove:hover {
+  color: red;
+}
+.box .glyphicon-pencil {
+  right: 30px;
+  top: 10px;
+}
+.box .glyphicon-pencil:hover {
+  color: blue;
+}
+
 
 .space {
   margin-bottom: 30px;
 }
+

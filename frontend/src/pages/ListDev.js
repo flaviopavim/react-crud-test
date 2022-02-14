@@ -27,6 +27,10 @@ function ListDev() {
         });   
     }
 
+    function handleEdit(id) {
+        history.push('/edit/dev/'+id);
+    }
+
     return (
         <div className="container">
             <h1>Desenvolvedores</h1>
@@ -38,7 +42,7 @@ function ListDev() {
                         <div key={key} className="col-md-4">
                             <div className="box">
                                 <i className="glyphicon glyphicon-remove" onClick={() => handleDelete(val.id)}></i>
-                                <i className="glyphicon glyphicon-pencil" onClick={() => history.push('/edit/dev/'+val.id)}></i>
+                                <i className="glyphicon glyphicon-pencil" onClick={() => handleEdit(val.id)}></i>
                                 <div>Nome: {val.name}</div>
                                 <div>Descrição: {val.description}</div>
                                 <div>Nível: {val.level}</div>
