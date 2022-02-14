@@ -8,6 +8,11 @@ body {
   font-family: Arial, sans-serif;
 }
 
+h1 {
+  margin:0;
+  padding: 0;
+}
+
 .navbar {
   width:100%;
   background-color: rgb(46, 18, 150);

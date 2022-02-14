@@ -14,15 +14,29 @@ function EditDev() {
         description: ''
     })
 
+    const [levels, setLevels] = useState([
+
+    ])
+
     useEffect(() => {
         const id = window.location.href.split('/')[5]
         Axios.get('http://localhost:3002/api/dev/' + id)
             .then(response => {
                 setDev(response.data[0])
+                Axios.get('http://localhost:3002/api/list/level').then(response => {
+                    setLevels([]);
+                    response.data.forEach(level => {
+                        console.log(level)
+                        setLevels(levels => [...levels, { value: level.id, label: level.name }])
+                        if (level.id == dev.level) {
+                            setDev({ ...dev, level: level.id })
+                        }
+                    })
+                })
             })
+        
     }, [])
-
-
+    
     function handleChange(event) {
         setDev({
             ...dev,
@@ -39,7 +53,7 @@ function EditDev() {
         )
         history.push("/")
     } 
-    
+
     return (
         <div className="container">
             <form onSubmit={handleSubmit}>
@@ -50,10 +64,11 @@ function EditDev() {
                 <div className="form-group">
                     <label>Nível:</label>
                     <select className="form-control" name="level" value={dev.level} onChange={handleChange}>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+                        {
+                            levels.map(level => {
+                                return <option key={level.value} value={level.value}>{level.label}</option>
+                            })
+                        }
                     </select>
                 </div>
                 <div className="form-group">

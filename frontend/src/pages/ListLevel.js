@@ -44,7 +44,6 @@ function ListLevel() {
                                 <i className="glyphicon glyphicon-pencil" onClick={() => history.push('/edit/level/'+val.id)}></i>
                                 <div>Nome: {val.name}</div>
                                 <div>Descrição: {val.description}</div>
-                                <div>Nível: {val.level}</div>
                             </div>
                             <div className="space"></div>
                         </div>

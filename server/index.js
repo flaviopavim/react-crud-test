@@ -8,21 +8,46 @@ const PORT = 3002;
 app.use(cors());
 app.use(express.json())
 
-
+ 
+const levels = [
+    { name: 'Jedi', description: 'Jedi' },
+    { name: 'Sith', description: 'Sith' },
+    { name: 'Padawan', description: 'Padawan' },
+    { name: 'Jedi Master', description: 'Jedi Master' },
+    { name: 'Sith Lord', description: 'Sith Lord' },
+    { name: 'Master', description: 'Master' },
+    { name: 'Apprentice', description: 'Apprentice' },
+    { name: 'Jedi Knight', description: 'Jedi Knight' },
+    { name: 'Sith Apprentice', description: 'Sith Apprentice' },
+    { name: 'Jedi Padawan', description: 'Jedi Padawan' },
+]
+    
 
 //levels
 app.get("/api/list/level", (req, res) => {
     db.query(`CREATE TABLE IF NOT EXISTS level (
         id INT NOT NULL AUTO_INCREMENT,
         name VARCHAR(255) NOT NULL,
-        level INT(11) NOT NULL,
         description VARCHAR(255) NOT NULL,
         PRIMARY KEY (id)
     )`, (err, result) => {
         if (err) throw err;
         db.query(`SELECT * FROM level ORDER BY id DESC`, (err, result) => {
             if (err) throw err;
-            res.send(result)
+            if (result.length === 0) {
+                //foreach levels
+                levels.forEach(level => {   
+                    db.query(`INSERT INTO level (name, description) VALUES ('${level.name}', '${level.description}')`, (err, result) => {
+                        if (err) throw err;
+                    })
+                })
+                db.query(`SELECT * FROM level ORDER BY id DESC`, (err, result) => {
+                    if (err) throw err;
+                    res.send(result)
+                })
+            } else {
+                res.send(result)
+            }
         })
     })
 });
@@ -86,7 +111,7 @@ app.get("/api/list/dev", (req, res) => {
         PRIMARY KEY (id)
     )`, (err, result) => {
         if (err) throw err;
-        db.query(`SELECT * FROM dev ORDER BY id DESC`, (err, result) => {
+        db.query(`SELECT d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level ORDER BY d.id DESC`, (err, result) => {
             if (err) throw err;
             res.send(result)
         })
@@ -96,7 +121,7 @@ app.get("/api/list/dev", (req, res) => {
 
 app.get("/api/dev/:id", (req, res) => {
     const id = req.params.id;
-    db.query("SELECT * FROM dev WHERE id = ?", id, (err, result) => {
+    db.query("SELECT d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level WHERE d.id = ?", id, (err, result) => {
         if (err) {
             console.log(err)
         }
