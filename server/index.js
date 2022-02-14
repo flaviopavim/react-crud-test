@@ -73,7 +73,17 @@ app.get("/api/search/dev/:search", (req, res) => {
 //busca por um dev
 app.get("/api/dev/:id", (req, res) => {
     const id = req.params.id;
-    db.query("SELECT d.id,d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level WHERE d.id = ?", id, (err, result) => {
+    db.query(`
+    SELECT 
+        d.id,
+        d.name,
+        l.name AS level,
+        d.description 
+    FROM 
+        dev d 
+            LEFT JOIN level l ON l.id=d.level 
+    WHERE d.id = ?
+    `, id, (err, result) => {
         if (err) {
             console.log(err)
             res.status(404).send(result)
@@ -145,7 +155,16 @@ app.get("/api/list/level", (req, res) => {
 
 //busca
 app.get("/api/search/level/:search", (req, res) => {
-    db.query(`SELECT * FROM level WHERE name LIKE '%`+req.params.search+`%' ORDER BY id DESC`, (err, result) => {
+    db.query(`
+    SELECT 
+        * 
+    FROM 
+        level 
+    WHERE 
+        name LIKE '%`+req.params.search+`%' OR 
+        description LIKE '%`+req.params.search+`%' 
+    ORDER BY id DESC
+    `, (err, result) => {
         if (err) {
             console.log(err)
             res.status(400).send(result)
