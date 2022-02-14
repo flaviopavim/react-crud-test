@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
 import '../App.css'
 import { useHistory } from "react-router-dom";
@@ -13,6 +13,10 @@ function CreateDev() {
         level: '',
         description: ''
     })
+
+    const [levels, setLevels] = useState([
+
+    ])
 
     function handleChange(event) {
         setDev({
@@ -30,7 +34,18 @@ function CreateDev() {
         history.push("/")
     }
 
-
+    useEffect(() => {
+        Axios.get('http://localhost:3002/api/list/level').then(response => {
+            setLevels([]);
+            response.data.forEach(level => {
+                console.log(level)
+                setLevels(levels => [...levels, { value: level.id, label: level.name }])
+                if (level.id == dev.level) {
+                    setDev({ ...dev, level: level.id })
+                }
+            })
+        })
+    }, [])
             
     
     return (
@@ -43,15 +58,16 @@ function CreateDev() {
                 <div className="form-group">
                     <label>Nível:</label>
                     <select className="form-control" name="level" value={dev.level} onChange={handleChange}>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+                        {
+                            levels.map(level => {
+                                return <option key={level.value} value={level.value}>{level.label}</option>
+                            })
+                        }
                     </select>
                 </div>
                 <div className="form-group">
                     <label>Descrição:</label>
-                    <input className="form-control" type="text" name="description" value={dev.description} onChange={handleChange} />
+                    <textarea className="form-control" name="description" onChange={handleChange}>{dev.description}</textarea>
                 </div>
                 <input className="btn btn-success right" type="submit" value="Cadastrar desenvolvedor" />
             </form>

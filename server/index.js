@@ -10,16 +10,28 @@ app.use(express.json())
 
  
 const levels = [
-    { name: 'Jedi', description: 'Jedi' },
-    { name: 'Sith', description: 'Sith' },
-    { name: 'Padawan', description: 'Padawan' },
-    { name: 'Jedi Master', description: 'Jedi Master' },
-    { name: 'Sith Lord', description: 'Sith Lord' },
-    { name: 'Master', description: 'Master' },
-    { name: 'Apprentice', description: 'Apprentice' },
-    { name: 'Jedi Knight', description: 'Jedi Knight' },
-    { name: 'Sith Apprentice', description: 'Sith Apprentice' },
-    { name: 'Jedi Padawan', description: 'Jedi Padawan' },
+    { name: 'Jedi', description: 'Mestre do mestre do mestre do tio do mestre do mestre do irmão do mestre que um dia foi mestre dos mestres dos Jedis' },
+    { name: 'Jedi Master', description: 'Mestre dos Jedis' },
+    { name: 'Sith Lord', description: 'Mestre dos mestres' },
+    { name: 'Master', description: 'Mestre' },
+    { name: 'Apprentice', description: 'Aprendiz do mestre' },
+    { name: 'Jedi Knight', description: 'Carinha dahora' },
+    { name: 'Sith Apprentice', description: 'Minino esperto' },
+    { name: 'Jedi Padawan', description: 'Jovem aprendiz' },
+]
+
+const devs = [
+    { name: 'Obi-Wan Kenobi', level: 8, description: 'Kenobi' },
+    { name: 'Anakin Skywalker', level: 7, description: 'Skywalker' },
+    { name: 'Darth Sidious', level: 6, description: 'Sidious' },
+    { name: 'Mace Windu', level: 6, description: 'Windu' },
+    { name: 'Yoda', level: 5, description: 'Apprentice' },
+    { name: 'Qui-Gon Jinn', level: 5, description: 'Jinn' },
+    { name: 'Darth Maul', level: 4, description: 'Maul' },
+    { name: 'Count Dooku', level: 4, description: 'Dooku' },
+    { name: 'Darth Vader', level: 3, description: 'Vader' },
+    { name: 'Luke Skywalker', level: 2, description: 'Luke' },
+    { name: 'Flávio Pavim', level: 1, description: 'Programador' },
 ]
     
 
@@ -73,8 +85,7 @@ app.post('/api/create/level', (req, res) => {
             console.log(err)
         }
         console.log(result)
-    }
-    );
+    });
 })
 
 app.post('/api/edit/level/:id', (req, res) => {
@@ -113,7 +124,24 @@ app.get("/api/list/dev", (req, res) => {
         if (err) throw err;
         db.query(`SELECT d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level ORDER BY d.id DESC`, (err, result) => {
             if (err) throw err;
-            res.send(result)
+            if (result.length === 0) {
+                devs.forEach(dev => {
+                    db.query(`INSERT INTO dev (name, level, description) VALUES ('${dev.name}', '${dev.level}', '${dev.description}')`, (err, result) => {
+                        if (err) throw err;
+                    })
+                })
+                levels.forEach(level => {   
+                    db.query(`INSERT INTO level (name, description) VALUES ('${level.name}', '${level.description}')`, (err, result) => {
+                        if (err) throw err;
+                    })
+                })
+                db.query(`SELECT d.name,l.name AS level,d.description FROM dev d LEFT JOIN level l ON l.id=d.level ORDER BY d.id DESC`, (err, result) => {
+                    if (err) throw err;
+                    res.send(result)
+                })
+            } else {
+                res.send(result)
+            }
         })
     })
     
