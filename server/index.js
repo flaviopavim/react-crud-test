@@ -2,6 +2,8 @@ const express = require('express');
 const db = require('./config/db')
 const cors = require('cors')
 
+import { shallow,mount,render } from 'enzyme';
+
 const app = express();
 
 const PORT = 3002;
@@ -11,46 +13,46 @@ app.use(express.json())
 //devs de demonstração
 const devs = [
     //Eu
-    { name: 'Flávio Pavim', level: 1, description: 'Programador' },
+    { name: 'Flávio Pavim', level: 23, description: 'Programador' },
     //Star Wars
-    { name: 'Luke Skywalker', level: 2, description: 'Luke' },
-    { name: 'Darth Vader', level: 3, description: 'Vader' },
-    { name: 'Count Dooku', level: 4, description: 'Dooku' },
-    { name: 'Darth Maul', level: 4, description: 'Maul' },
-    { name: 'Yoda', level: 5, description: 'Apprentice' },
-    { name: 'Qui-Gon Jinn', level: 5, description: 'Jinn' },
-    { name: 'Mace Windu', level: 6, description: 'Windu' },
-    { name: 'Darth Sidious', level: 6, description: 'Sidious' },
-    { name: 'Anakin Skywalker', level: 7, description: 'Skywalker' },
-    { name: 'Obi-Wan Kenobi', level: 8, description: 'Kenobi' },
+    { name: 'Luke Skywalker', level: 8, description: 'Luke' },
+    { name: 'Darth Vader', level: 7, description: 'Vader' },
+    { name: 'Count Dooku', level: 6, description: 'Dooku' },
+    { name: 'Darth Maul', level: 5, description: 'Maul' },
+    { name: 'Yoda', level: 4, description: 'Apprentice' },
+    { name: 'Qui-Gon Jinn', level: 3, description: 'Jinn' },
+    { name: 'Mace Windu', level: 2, description: 'Windu' },
+    { name: 'Darth Sidious', level: 2, description: 'Sidious' },
+    { name: 'Anakin Skywalker', level: 1, description: 'Skywalker' },
+    { name: 'Obi-Wan Kenobi', level: 1, description: 'Kenobi' },
     //Dragon Ball
-    { name: 'Goku', level: 1, description: 'Goku' },
-    { name: 'Vegeta', level: 2, description: 'Vegeta' },
-    { name: 'Gohan', level: 3, description: 'Gohan' },
-    { name: 'Piccolo', level: 4, description: 'Piccolo' },
-    { name: 'Trunks', level: 4, description: 'Trunks' },
-    { name: 'Majin Buu', level: 5, description: 'Majin Buu' },
-    { name: 'Cell', level: 5, description: 'Cell' },
-    { name: 'Frieza', level: 6, description: 'Frieza' },
-    { name: 'Android 18', level: 6, description: 'Android 18' },
-    { name: 'Android 17', level: 7, description: 'Android 17' },
-    { name: 'Android 16', level: 8, description: 'Android 16' },
+    { name: 'Goku', level: 22, description: 'Goku' },
+    { name: 'Vegeta', level: 21, description: 'Vegeta' },
+    { name: 'Gohan', level: 20, description: 'Gohan' },
+    { name: 'Piccolo', level: 19, description: 'Piccolo' },
+    { name: 'Trunks', level: 18, description: 'Trunks' },
+    { name: 'Majin Buu', level: 17, description: 'Majin Buu' },
+    { name: 'Cell', level: 16, description: 'Cell' },
+    { name: 'Frieza', level: 15, description: 'Frieza' },
+    { name: 'Android 18', level: 14, description: 'Android 18' },
+    { name: 'Android 17', level: 13, description: 'Android 17' },
+    { name: 'Android 16', level: 12, description: 'Android 16' },
 
 ]
 
 
 //níveis de demonstração
 const levels = [
-    { name: 'Jedi Padawan', description: 'Jovem aprendiz' },
+    { name: 'Jedi Padawan', description: 'Jovem aprendiz' }, //1
     { name: 'Sith Apprentice', description: 'Minino esperto' },
     { name: 'Jedi Knight', description: 'Carinha dedicado' },
     { name: 'Apprentice', description: 'Aprendiz do mestre' },
     { name: 'Master', description: 'Mestre' },
     { name: 'Sith Lord', description: 'Mestre dos mestres' },
     { name: 'Jedi', description: 'Mestre do mestre do mestre do tio do mestre do mestre do irmão do mestre que um dia foi mestre dos mestres' },
-    { name: 'Jedi Master', description: 'O f*dão' },
+    { name: 'Jedi Master', description: 'O f*dão' }, //8
     { name: 'Super Sayajin', description: 'Super Sayajin' },
-    { name: 'Super Sayajin 2', description: 'Super Sayajin 2' },
+    { name: 'Super Sayajin 2', description: 'Super Sayajin 2' }, //10
     { name: 'Super Sayajin 3', description: 'Super Sayajin 3' },
     { name: 'Super Sayajin 4', description: 'Super Sayajin 4' },
     { name: 'Super Sayajin 5', description: 'Super Sayajin 5' },
@@ -60,10 +62,10 @@ const levels = [
     { name: 'Super Sayajin 9', description: 'Super Sayajin 9' },
     { name: 'Super Sayajin 10', description: 'Super Sayajin 10' },
     { name: 'Super Sayajin 11', description: 'Super Sayajin 11' },
-    { name: 'Super Sayajin 12', description: 'Super Sayajin 12' },
+    { name: 'Super Sayajin 12', description: 'Super Sayajin 12' }, //20
     { name: 'Super Sayajin 13', description: 'Super Sayajin 13' },
     { name: 'Super Sayajin 14', description: 'Super Sayajin 14' },
-    { name: 'Super Sayajin 15', description: 'Super Sayajin 15' },
+    { name: 'Super Sayajin 15', description: 'Super Sayajin 15' }, //23
 ]
 
 /////////////////////////////////
@@ -381,3 +383,94 @@ app.listen(PORT, () => {
     })
     console.log(`Server is running on ${PORT}`)
 })
+
+
+//testes unitários
+/*
+const assert = require('assert');
+describe('Testes unitários', function() {
+    describe('Teste de criação de nível', function() {
+        it('Deve criar nível', function() {
+            db.query("INSERT INTO level (name, description) VALUES ('teste', 'teste')", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result.affectedRows, 1)
+            })
+        })
+    })
+    describe('Teste de criação de dev', function() {
+        it('Deve criar dev', function() {
+            db.query("INSERT INTO dev (name, level, description) VALUES ('teste', '1', 'teste')", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result.affectedRows, 1)
+            })
+        })
+    })
+    describe('Teste de busca de nível', function() {
+        it('Deve buscar nível', function() {
+            db.query("SELECT * FROM level WHERE id = 1", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result[0].name, 'teste')
+            })
+        })
+    })
+    describe('Teste de busca de dev', function() {
+        it('Deve buscar dev', function() {
+            db.query("SELECT * FROM dev WHERE id = 1", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result[0].name, 'teste')
+            })
+        })
+    })
+    describe('Teste de atualização de nível', function() {
+        it('Deve atualizar nível', function() {
+            db.query("UPDATE level SET name = 'teste2' WHERE id = 1", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result.affectedRows, 1)
+            })
+        })
+    })
+    describe('Teste de atualização de dev', function() {
+        it('Deve atualizar dev', function() {
+            db.query("UPDATE dev SET name = 'teste2' WHERE id = 1", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result.affectedRows, 1)
+            })
+        })
+    }
+    )
+    describe('Teste de exclusão de nível', function() {
+        it('Deve excluir nível', function() {
+            db.query("DELETE FROM level WHERE id = 1", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result.affectedRows, 1)
+            })
+        })
+    }
+    )
+    describe('Teste de exclusão de dev', function() {
+        it('Deve excluir dev', function() {
+            db.query("DELETE FROM dev WHERE id = 1", (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                assert.equal(result.affectedRows, 1)
+            })
+        })
+    }
+    )
+})
+*/

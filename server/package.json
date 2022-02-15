@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
+    "test:watch": "npm test -- --watch",
     "start": "node index.js",
     "devStart": "nodemon index.js"
+    
   },
   "keywords": [],
   "author": "",
@@ -13,6 +16,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.2",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "prop-types": "^15.8.1"
   }
 }
