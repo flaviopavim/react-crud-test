@@ -86,7 +86,7 @@ function ListLevel() {
                     <div className="col-md-9">
                         <div className="form-group">
                             <label>Pesquisar:</label>
-                            <input className="form-control" type="text" name="search" value={search} onChange={handleChange} />
+                            <input className="form-control" type="text" name="search" value={search} onChange={handleChange} placeholder="Digite o nível ou a descrição do nivel" />
                         </div>
                     </div>
                     <div className="col-md-3">

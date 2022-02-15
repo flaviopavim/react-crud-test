@@ -261,10 +261,9 @@ app.get("/api/level/:id", (req, res) => {
 //criar nível
 app.post('/api/create/level', (req, res) => {
     const name = req.body.name;
-    const level = req.body.level;
     const description = req.body.description;
-    console.log("Level criado: ",name, level, description)
-    db.query("INSERT INTO level (name, level, description) VALUES (?,?,?)", [name, level, description], (err, result) => {
+    console.log("Level criado: ",name, description)
+    db.query("INSERT INTO level (name, description) VALUES (?,?)", [name, description], (err, result) => {
         if (err) {
             console.log(err)
             res.status(400).send(result)
