@@ -30,10 +30,22 @@ function EditarDesenvolvedor() {
     const [nivel_id, setarNivelID] = useState(0)
 
     useEffect(() => {
+
         const id = window.location.href.split('/')[5]
+        
+        //busca dados do desenvolvedor selecionado
         Axios.get('http://localhost:3002/api/desenvolvedor/' + id)
             .then(response => {
+              
+                //formata data de nascimento para dd/mm/yyyy
+                let data = response.data[0].datanascimento
+                data = data.substring(8, 10) + '/' + data.substring(5, 7) + '/' + data.substring(0, 4)
+                response.data[0].datanascimento = data
+                
+                //seta os valores do desenvolvedor
                 setarDesenvolvedor(response.data[0])
+
+                //busca todos os niveis para o select
                 Axios.get('http://localhost:3002/api/listar/niveis/todos').then(response2 => {
                     setarNiveis([]);
                     response2.data.forEach(nivel => {
@@ -42,6 +54,7 @@ function EditarDesenvolvedor() {
                         if (nivel.name == response.data[0].nivel) {
                             setarNivelID(nivel.id)
                         }
+                        
                     })
                 }).catch(error => {
                     toast.error("Erro ao listar os níveis!")
@@ -53,6 +66,33 @@ function EditarDesenvolvedor() {
     }, [])
     
     function manipularMudanca(event) {
+        if (event.target.name == "sexo") {
+            //verificar se digitou o sexo certo
+            if (event.target.value=='m' || event.target.value=='f') {
+                setarDesenvolvedor({
+                    ...desenvolvedor,
+                    [event.target.name]: event.target.value
+                })
+            } else {
+                toast.error("Sexo inválido!")
+            }
+
+        } else if (event.target.name == "datanascimento") {
+            //formata a data conforme digita
+            let data = event.target.value
+            if (data.length == 2) {
+                data = data + '/'
+            } else if (data.length == 5) {
+                data = data + '/'
+            }
+            event.target.value=data
+            if (data.length > 10) {
+                data = event.target.value = data.substring(0, 10)
+            }
+            if (data.length == 10 && Number(data.substring(6, 10)) < 1950) {
+                event.target.value = data.substring(0, 6)+'1950'
+            }
+        }
         setarDesenvolvedor({
             ...desenvolvedor,
             [event.target.name]: event.target.value
@@ -63,6 +103,7 @@ function EditarDesenvolvedor() {
         }
     }
 
+    //formata e atualiza
     function manipularCadastro(event) {
         event.preventDefault()
         if (desenvolvedor.nivel=='') {
