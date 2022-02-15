@@ -2,9 +2,20 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
 import '../App.css'
 import { useHistory } from "react-router-dom";
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function CreateDev() {
+
+    toast.configure({
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
 
     let history = useHistory();
 
@@ -27,25 +38,44 @@ function CreateDev() {
     function handleSubmit(event) {
         event.preventDefault()
         console.log(dev)
-        Axios.post('http://localhost:3002/api/create/dev', 
-            { name: dev.name, level:dev.level, description: dev.description }
-        )
-        history.push("/")
+        if (dev.name=='') {
+            toast.error("O nome não pode ser vazio!")
+        } else if (dev.level=='') {
+            toast.error("O level não pode ser vazio!")
+        } else if (dev.description=='') {
+            toast.error("A descrição não pode ser vazia!")
+        } else {
+            Axios.post('http://localhost:3002/api/create/dev', 
+                { name: dev.name, level:dev.level, description: dev.description }
+            ).then(response => {
+                toast.success("Cadastrado com sucesso!")
+                history.push("/")
+            }).catch(error => {
+                toast.error("Erro ao cadastrar!")
+                toast.error(error)
+            })
+        }
     }
 
     useEffect(() => {
         Axios.get('http://localhost:3002/api/list/level/all').then(response => {
-            setLevels([]);
+            setLevels([{value:'Selecione um nível', label:'Selecione um nível'}]);
             response.data.forEach(level => {
                 console.log(level)
                 setLevels(levels => [...levels, { value: level.id, label: level.name }])
             })
+        }).catch(error => {
+            toast.error("Erro ao listar todos os níveis!")
+            toast.error(error)
         })
     }, [])
             
     
     return (
         <div className="container">
+            <h2>Cadastrar desenvolvedor</h2>
+            <a href="/list/dev" className="btn btn-xs btn-default">Ver desenvolvedores</a>
+            <div className="space"></div>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Nome do desenvolvedor:</label>

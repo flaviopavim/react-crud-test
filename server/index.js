@@ -276,10 +276,9 @@ app.post('/api/create/level', (req, res) => {
 //editar nível
 app.post('/api/edit/level/:id', (req, res) => {
     const name = req.body.name;
-    const level = req.body.level;
     const description = req.body.description;
-    console.log("DEV atualizado: ",name, level, description)
-    db.query("UPDATE level SET name = ?, level = ?, description = ? WHERE id = ?", [name, level, description, req.params.id], (err, result) => {
+    console.log("DEV atualizado: ",name, description)
+    db.query("UPDATE level SET name = ?, description = ? WHERE id = ?", [name, description, req.params.id], (err, result) => {
         if (err) {
             console.log(err)
             res.status(400).send(result)

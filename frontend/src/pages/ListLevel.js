@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import '../App.css'
 import { useHistory } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ListLevel() {
+
+    toast.configure({
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
 
     let history = useHistory();
 
     const [levelList, setLevelList] = useState([]);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
+    const [delete_id, setDeleteID] = useState('');
+    const [showHide, setShowHide] = useState('hide');
 
     useEffect(() => {
         let action = history.location.pathname.split("/")[1];
@@ -35,20 +49,28 @@ function ListLevel() {
                     setLevelList(data);
                 });
         }
-    },[history.location.pathname]);
+    },[history.location.pathname])
     
-    function handleDelete(id) {
-        fetch(`http://localhost:3002/api/delete/level/${id}`, {
+    function handleDelete() {
+        setShowHide('hide');
+        fetch(`http://localhost:3002/api/delete/level/${delete_id}`, {
             method: 'DELETE'
         }).then(res => {
             fetch(`http://localhost:3002/api/list/level/${page}`)
                 .then(response => response.json())
                 .then(data => {
                     setLevelList(data);
-            });   
+            }).then(() => {
+                toast.success('Nível excluído com sucesso!');   
+            }).catch(error => {
+                toast.error('Não foi possível excluir o nível')
+                toast.error(error)
+            });
             
+        }).catch(error => {
+            toast.error('Não foi possível excluir o nível')
+            toast.error(error)
         })
-        
     }
 
     function handleChange(event) {
@@ -76,10 +98,30 @@ function ListLevel() {
         pages.push(i);
     }
 
+    function closeMyModal() {
+        setShowHide('hide');
+    }
+    function showModal(id) {
+        setDeleteID(id);
+        setShowHide('show');
+    }
+
     return (
         <div className="container">
-            <h1>Níveis</h1>
-            <a href="/create/level" className="btn btn-xs btn-default">Criar nível</a>
+            <div className={"myModalBG "+showHide}>
+                <div className="myModal">
+                    <div className="myModalTitle">Excluir</div>
+                    <div className="myModalBody">
+                        Tem certeza?
+                    </div>
+                    <div className="myModalFooter right">
+                        <button className="btn btn-default" onClick={closeMyModal}>Fechar</button>
+                        <button className="btn btn-success" onClick={handleDelete}>Confirmar</button>
+                    </div>
+                </div>
+            </div>
+            <h2>Níveis</h2>
+            <a href="/create/level" className="btn btn-xs btn-default">Cadastrar nível</a>
             <div className="space"></div>
             <form>
                 <div className="row">
@@ -100,7 +142,7 @@ function ListLevel() {
                     return (
                         <div key={key} className="col-md-4">
                             <div className="box">
-                                <i className="glyphicon glyphicon-remove" onClick={() => handleDelete(val.id)}></i>
+                                <i className="glyphicon glyphicon-remove" onClick={() => showModal(val.id)}></i>
                                 <i className="glyphicon glyphicon-pencil" onClick={() => history.push('/edit/level/'+val.id)}></i>
                                 <div>Nome: {val.name}</div>
                                 <div>Descrição: {val.description}</div>

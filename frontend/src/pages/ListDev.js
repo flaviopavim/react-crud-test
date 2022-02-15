@@ -1,14 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import '../App.css'
 import { useHistory } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ListDev() {
+
+    toast.configure({
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+    
 
     let history = useHistory();
 
     const [devList, setDevList] = useState([]);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
+    const [delete_id, setDeleteID] = useState('');
+    const [showHide, setShowHide] = useState('hide');
 
     useEffect(() => {
         let action = history.location.pathname.split("/")[1];
@@ -24,6 +39,9 @@ function ListDev() {
                 .then(res => res.json())
                 .then(data => {
                     setDevList(data);
+                }).catch(error => {
+                    toast.error('Erro ao buscar desenvolvedores');
+                    toast.error(error)
                 })
         } else {
             if (typeof history.location.pathname.split("/")[3]!='undefined') {
@@ -33,24 +51,34 @@ function ListDev() {
                 .then(response => response.json())
                 .then(data => {
                     setDevList(data);
+                }).catch(error => {
+                    toast.error("Erro ao listar desenvolvedores")
+                    toast.error(error)
                 });
         }
     },[history.location.pathname]);
 
-    function handleDelete(id) {
-        fetch(`http://localhost:3002/api/delete/dev/${id}`, {
+    function handleDelete() {
+        setShowHide('hide');
+        fetch(`http://localhost:3002/api/delete/dev/${delete_id}`, {
             method: 'DELETE'
         }).then(res => {
+            toast.success("Desenvolvedor excluído com sucesso!");
             fetch(`http://localhost:3002/api/list/dev/${page}`)
-                .then(response => response.json())
-                .then(data => {
-                    setDevList(data);
+            .then(response => response.json())
+            .then(data => {
+                setDevList(data)
+            }).catch(error => {
+                toast.error('Erro ao excluir desenvolvedor');
+                toast.error(error);
             });
+        }).catch(error => {
+            toast.error("Não foi possível excluir o desenvolvedor");
+            toast.error(error)
         })
     }
 
     function handleEdit(pg) {
-        //pg.preventDefault()
         setPage(pg);
         history.push('/edit/dev/'+pg);
     }
@@ -91,11 +119,33 @@ function ListDev() {
     for (let i=1; i<=links; i++) {
         pages.push(i);
     }
+    
+    function closeMyModal() {
+        setShowHide('hide');
+    }
+    function showModal(id) {
+        setDeleteID(id);
+        setShowHide('show');
+    }
+
+    
 
     return (
         <div className="container">
-            <h1>Desenvolvedores</h1>
-            <a href="/create/dev" className="btn btn-xs btn-default">Criar desenvolvedor</a>
+            <div className={"myModalBG "+showHide}>
+                <div className="myModal">
+                    <div className="myModalTitle">Excluir</div>
+                    <div className="myModalBody">
+                        Tem certeza?
+                    </div>
+                    <div className="myModalFooter right">
+                        <button className="btn btn-default" onClick={closeMyModal}>Fechar</button>
+                        <button className="btn btn-success" onClick={handleDelete}>Confirmar</button>
+                    </div>
+                </div>
+            </div>
+            <h2>Desenvolvedores</h2>
+            <a href="/create/dev" className="btn btn-xs btn-default">Cadastrar desenvolvedor</a>
             <div className="space"></div>
             <form>
                 <div className="row">
@@ -117,7 +167,7 @@ function ListDev() {
                     return (
                         <div key={key} className="col-md-4">
                             <div className="box">
-                                <i className="glyphicon glyphicon-remove" onClick={() => handleDelete(val.id)}></i>
+                                <i className="glyphicon glyphicon-remove" onClick={() => showModal(val.id)}></i>
                                 <i className="glyphicon glyphicon-pencil" onClick={() => handleEdit(val.id)}></i>
                                 <div>Nome: {val.name}</div>
                                 <div>Descrição: {val.description}</div>
