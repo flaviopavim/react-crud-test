@@ -17,6 +17,7 @@ function CreateDev() {
     const [levels, setLevels] = useState([])
 
     function handleChange(event) {
+        console.log(event)
         setDev({
             ...dev,
             [event.target.name]: event.target.value
@@ -27,13 +28,13 @@ function CreateDev() {
         event.preventDefault()
         console.log(dev)
         Axios.post('http://localhost:3002/api/create/dev', 
-            { name: dev.name, description: dev.description }
+            { name: dev.name, level:dev.level, description: dev.description }
         )
         history.push("/")
     }
 
     useEffect(() => {
-        Axios.get('http://localhost:3002/api/list/level').then(response => {
+        Axios.get('http://localhost:3002/api/list/level/all').then(response => {
             setLevels([]);
             response.data.forEach(level => {
                 console.log(level)
