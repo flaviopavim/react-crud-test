@@ -112,7 +112,7 @@ function ListLevel() {
                 <div className="myModal">
                     <div className="myModalTitle">Excluir</div>
                     <div className="myModalBody">
-                        Tem certeza?
+                        Tem certeza que deseja excluir este ítem?
                     </div>
                     <div className="myModalFooter right">
                         <button className="btn btn-default" onClick={closeMyModal}>Fechar</button>
@@ -146,6 +146,7 @@ function ListLevel() {
                                 <i className="glyphicon glyphicon-pencil" onClick={() => history.push('/edit/level/'+val.id)}></i>
                                 <div>Nome: {val.name}</div>
                                 <div>Descrição: {val.description}</div>
+                                <div>Desenvolvedores com esse nível: {val.total_dev}</div>
                             </div>
                             <div className="space"></div>
                         </div>

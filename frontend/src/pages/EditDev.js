@@ -79,7 +79,7 @@ function EditDev() {
             toast.error("A descrição não pode ser vazia!")
         } else {
             const id = window.location.href.split('/')[5]
-            Axios.post('http://localhost:3002/api/edit/dev/'+id, 
+            Axios.patch('http://localhost:3002/api/edit/dev/'+id, 
                 { name: dev.name, level: level_id, description: dev.description }
             ).then(response => {
                 toast.success("Desenvolvedor editado com sucesso!")

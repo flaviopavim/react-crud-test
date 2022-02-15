@@ -122,8 +122,9 @@ h2 {
   margin-bottom: 20px;
 }
 .myModalBody {
-  font-size: 20px;
+  font-size: 14px;
   margin-bottom: 20px;
+  text-align: center;
 }
 .myModalFooter {
   font-size: 20px;

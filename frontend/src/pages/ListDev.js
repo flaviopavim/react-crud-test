@@ -136,7 +136,7 @@ function ListDev() {
                 <div className="myModal">
                     <div className="myModalTitle">Excluir</div>
                     <div className="myModalBody">
-                        Tem certeza?
+                        Tem certeza que deseja excluir este desenvolvedor?
                     </div>
                     <div className="myModalFooter right">
                         <button className="btn btn-default" onClick={closeMyModal}>Fechar</button>

@@ -47,7 +47,7 @@ function EditLevel() {
         } else if (level.description=='') {
             toast.error("A descrição não pode ser vazia!")
         } else {
-            Axios.post('http://localhost:3002/api/edit/level/'+id, 
+            Axios.patch('http://localhost:3002/api/edit/level/'+id, 
                 { name: level.name, description: level.description }
             ).then(response => {
                 toast.success("Editado com sucesso!")

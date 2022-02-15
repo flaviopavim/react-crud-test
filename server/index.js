@@ -2,8 +2,6 @@ const express = require('express');
 const db = require('./config/db')
 const cors = require('cors')
 
-import { shallow,mount,render } from 'enzyme';
-
 const app = express();
 
 const PORT = 3002;
@@ -172,7 +170,7 @@ app.post('/api/create/dev', (req, res) => {
 })
 
 //editar dev
-app.post('/api/edit/dev/:id', (req, res) => {
+app.patch('/api/edit/dev/:id', (req, res) => {
     const name = req.body.name;
     const level = req.body.level;
     const description = req.body.description;
@@ -213,11 +211,12 @@ app.get("/api/list/level/:pgn", (req, res) => {
     }
     db.query(`
     SELECT 
-        *,
-        (SELECT COUNT(id) FROM level) AS total
+        l.*,
+        (SELECT COUNT(id) FROM level) AS total,
+        (SELECT COUNT(id) FROM dev WHERE level = l.id) AS total_dev
     FROM 
-        level 
-    ORDER BY id DESC
+        level l
+    ORDER BY l.id DESC
     ${limit}
     `, (err, result) => {
         if (err) {
@@ -231,13 +230,15 @@ app.get("/api/list/level/:pgn", (req, res) => {
 app.get("/api/search/level/:search/:pgn", (req, res) => {
     db.query(`
     SELECT 
-        * 
+        l.*,
+        (SELECT COUNT(id) FROM level) AS total,
+        (SELECT COUNT(id) FROM dev WHERE level = l.id) AS total_dev
     FROM 
-        level 
+        level l
     WHERE 
-        name LIKE '%`+req.params.search+`%' OR 
-        description LIKE '%`+req.params.search+`%' 
-    ORDER BY id DESC
+        l.name LIKE '%`+req.params.search+`%' OR 
+        l.description LIKE '%`+req.params.search+`%' 
+    ORDER BY l.id DESC
     LIMIT ${req.params.pgn},6
     `, (err, result) => {
         if (err) {
@@ -276,7 +277,7 @@ app.post('/api/create/level', (req, res) => {
 })
 
 //editar nível
-app.post('/api/edit/level/:id', (req, res) => {
+app.patch('/api/edit/level/:id', (req, res) => {
     const name = req.body.name;
     const description = req.body.description;
     console.log("DEV atualizado: ",name, description)
@@ -382,6 +383,20 @@ app.listen(PORT, () => {
         })
     })
     console.log(`Server is running on ${PORT}`)
+    console.log(`
+    /api/devs/:pgn
+    /api/search/dev/:search/:pgn
+    /api/dev/:id
+    /api/create/dev
+    /api/edit/dev/:id
+    /api/delete/dev/:id
+    /api/levels/:pgn
+    /api/search/level/:search/:pgn
+    /api/level/:id
+    /api/create/level
+    /api/edit/level/:id
+    /api/delete/level/:id
+    `)
 })
 
 
