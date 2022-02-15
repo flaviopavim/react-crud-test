@@ -17,7 +17,7 @@ function EditDev() {
         progress: undefined,
     });
      
-    let history = useHistory();
+    let historico = useHistory();
 
     const [desenvolvedor, setDesenvolvedor] = useState({
         nivel: '',
@@ -51,7 +51,7 @@ function EditDev() {
                     toast.error("Erro ao listar os níveis!")
                 })
             }).catch(error => {
-                toast.error("Erro ao listar os desenvolvedores!")
+                toast.error("Erro ao listar os desenvolvedor!")
             })
 
     }, [])
@@ -70,21 +70,23 @@ function EditDev() {
 
     function handleSubmit(event) {
         event.preventDefault()
-        console.log(desenvolvedor)
-
-        if (desenvolvedor.name=='') {
-            toast.error("O nome não pode ser vazio!")
-        } else if (desenvolvedor.nivel=='') {
+        if (desenvolvedor.nivel=='') {
             toast.error("O nivel não pode ser vazio!")
-        } else if (desenvolvedor.description=='') {
+        } else if (desenvolvedor.nome=='') {
+            toast.error("O nome não pode ser vazio!")
+        } else if (desenvolvedor.hobby=='') {
             toast.error("A descrição não pode ser vazia!")
         } else {
             const id = window.location.href.split('/')[5]
-            Axios.patch('http://localhost:3002/api/edit/desenvolvedor/'+id, 
-                { name: desenvolvedor.name, nivel: nivel_id, description: desenvolvedor.description }
-            ).then(response => {
+            Axios.patch('http://localhost:3002/api/editar/desenvolvedor/'+id, { 
+                    nivel: nivel_id, 
+                    nome: desenvolvedor.nome, 
+                    sexo: desenvolvedor.sexo, 
+                    datanascimento: desenvolvedor.datanascimento, 
+                    hobby: desenvolvedor.hobby
+            }).then(response => {
                 toast.success("Desenvolvedor editado com sucesso!")
-                history.push("/")
+                historico.push("/")
             }).catch(error => {
                 toast.error("Erro ao editar desenvolvedor!")
             })
@@ -120,10 +122,10 @@ function EditDev() {
                     <input className="form-control" type="text" name="datanascimento" value={desenvolvedor.datanascimento} onChange={handleChange} />
                 </div>
                 <div className="form-group">
-                    <label>Descrição:</label>
-                    <textarea className="form-control" name="hobby" onChange={handleChange}>{desenvolvedor.hobby}</textarea>
+                    <label>Hobby:</label>
+                    <input className="form-control" type="text" name="hobby" onChange={handleChange} value={desenvolvedor.hobby}></input>
                 </div>
-                <input className="btn btn-success right" type="submit" value="Cadastrar desenvolvedor" />
+                <input className="btn btn-success right" type="submit" value="Atualizar desenvolvedor" />
             </form>
         </div>
     )

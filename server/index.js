@@ -137,8 +137,10 @@ app.get("/api/desenvolvedor/:id", (req, res) => {
     db.query(`
     SELECT 
         d.id,
-        d.name,
         n.nivel,
+        d.nome,
+        d.sexo,
+        d.datanascimento,
         d.hobby 
     FROM 
         desenvolvedores d 
@@ -182,7 +184,8 @@ app.patch('/api/editar/desenvolvedor/:id', (req, res) => {
     const datanascimento = req.body.datanascimento;
     const hobby = req.body.hobby;
     //update desenvolvedor
-    db.query("UPDATE desenvolvedores SET nivel = ?, nome = ?, sexo = ?, datanascimento = ?, hobby = ? "+
+    db.query("UPDATE desenvolvedores SET "+
+        "nivel = ?, nome = ?, sexo = ?, datanascimento = ?, hobby = ? "+
         "WHERE id = ?", [nivel, nome, sexo, datanascimento, hobby, id], (err, result) => {
         if (err) {
             console.log(err)

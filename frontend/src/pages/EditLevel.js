@@ -32,7 +32,6 @@ function EditLevel() {
             })
     }, [])
 
-
     function handleChange(event) {
         setNivel(event.target.value)
     }
@@ -50,7 +49,6 @@ function EditLevel() {
                 history.push("/listar/niveis")
             }).catch(error => {
                 toast.error("Erro ao editar!")
-                toast.error(error)
             })
         }
     }

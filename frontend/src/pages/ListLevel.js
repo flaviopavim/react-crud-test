@@ -16,23 +16,23 @@ function ListLevel() {
         progress: undefined,
     });
 
-    let history = useHistory();
+    let historico = useHistory();
 
     const [niveisList, setLevelList] = useState([]);
-    const [busca, setSearch] = useState('');
-    const [paginacao, setPage] = useState(1);
-    const [delete_id, setDeleteID] = useState('');
-    const [showHide, setShowHide] = useState('hide');
+    const [busca, setarBusca] = useState('');
+    const [paginacao, setarPaginacao] = useState(1);
+    const [excluir_id, setarExcluirID] = useState('');
+    const [esconderMostrar, setarEsconderMostrar] = useState('hide');
 
     useEffect(() => {
-        let action = history.location.pathname.split("/")[1];
-        let table = history.location.pathname.split("/")[2];
-        let search_ = history.location.pathname.split("/")[3];
-        setPage(1)
-        if (action=='busca' && table=='nivel' && typeof search_!=undefined) {
-            setSearch(search_)
-            if (typeof history.location.pathname.split("/")[4]!='undefined') {
-                setPage(history.location.pathname.split("/")[4])
+        let action = historico.location.pathname.split("/")[1];
+        let tabela = historico.location.pathname.split("/")[2];
+        let search_ = historico.location.pathname.split("/")[3];
+        setarPaginacao(1)
+        if (action=='busca' && tabela=='nivel' && typeof search_!=undefined) {
+            setarBusca(search_)
+            if (typeof historico.location.pathname.split("/")[4]!='undefined') {
+                setarPaginacao(historico.location.pathname.split("/")[4])
             }
             fetch(`http://localhost:3002/api/buscar/niveis/${busca}/${paginacao}`)
                 .then(res => res.json())
@@ -40,8 +40,8 @@ function ListLevel() {
                     setLevelList(data);
                 })
         } else {
-            if (typeof history.location.pathname.split("/")[3]!='undefined') {
-                setPage(history.location.pathname.split("/")[3])
+            if (typeof historico.location.pathname.split("/")[3]!='undefined') {
+                setarPaginacao(historico.location.pathname.split("/")[3])
             }
             fetch(`http://localhost:3002/api/listar/niveis/${paginacao}`)
                 .then(response => response.json())
@@ -49,11 +49,11 @@ function ListLevel() {
                     setLevelList(data);
                 });
         }
-    },[history.location.pathname])
+    },[historico.location.pathname])
     
-    function handleDelete() {
-        setShowHide('hide');
-        fetch(`http://localhost:3002/api/excluir/nivel/${delete_id}`, {
+    function manipularExclusao() {
+        setarEsconderMostrar('hide');
+        fetch(`http://localhost:3002/api/excluir/nivel/${excluir_id}`, {
             method: 'DELETE'
         }).then(res => {
             if (res.status == 501) {
@@ -79,17 +79,17 @@ function ListLevel() {
 
     function handleChange(event) {
         event.preventDefault()
-        setSearch(event.target.value)
+        setarBusca(event.target.value)
     }
 
     function handleSearch(event) {
         event.preventDefault()
-        history.push('/buscar/niveis/'+busca+'/'+paginacao)
+        historico.push(`/buscar/niveis/${busca}/${paginacao}`)
     }
 
     function changePage(paginacao){
-        setPage(paginacao)
-        history.push('/listar/niveis/'+paginacao);
+        setarPaginacao(paginacao)
+        historico.push(`/listar/niveis/${paginacao}`);
     }
 
     let links=0
@@ -102,25 +102,25 @@ function ListLevel() {
         paginas.push(i);
     }
 
-    function closeMyModal() {
-        setShowHide('hide');
+    function fecharModal() {
+        setarEsconderMostrar('hide');
     }
     function showModal(id) {
-        setDeleteID(id);
-        setShowHide('show');
+        setarExcluirID(id);
+        setarEsconderMostrar('show');
     }
 
     return (
         <div className="container">
-            <div className={"myModalBG "+showHide}>
+            <div className={"myModalBG "+esconderMostrar}>
                 <div className="myModal">
                     <div className="myModalTitle">Excluir</div>
                     <div className="myModalBody">
                         Tem certeza que deseja excluir este ítem?
                     </div>
                     <div className="myModalFooter right">
-                        <button className="btn btn-default" onClick={closeMyModal}>Fechar</button>
-                        <button className="btn btn-success" onClick={handleDelete}>Confirmar</button>
+                        <button className="btn btn-default" onClick={fecharModal}>Fechar</button>
+                        <button className="btn btn-success" onClick={manipularExclusao}>Confirmar</button>
                     </div>
                 </div>
             </div>
@@ -157,7 +157,7 @@ function ListLevel() {
                                 <td>{val.total_desenvolvedores}</td>
                                 <td>
                                     <div className="right">
-                                        <a className="btn btn-xs btn-warning margin-right" onClick={() => history.push('/editar/nivel/'+val.id)}>Editar</a>
+                                        <a className="btn btn-xs btn-warning margin-right" onClick={() => historico.push('/editar/nivel/'+val.id)}>Editar</a>
                                         <a className="btn btn-xs btn-danger" onClick={() => showModal(val.id)}>Excluir</a>
                                     </div>
                                 </td>
