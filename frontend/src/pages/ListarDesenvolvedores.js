@@ -23,7 +23,7 @@ function ListarDesenvolvedores() {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [delete_id, setDeleteID] = useState('');
-    const [showHide, setShowHide] = useState('hide');
+    const [showHide, setarEsconderMostrar] = useState('hide');
 
     useEffect(() => {
         let action = history.location.pathname.split("/")[1];
@@ -50,6 +50,37 @@ function ListarDesenvolvedores() {
             fetch(`http://localhost:3002/api/listar/desenvolvedores/${page}`)
                 .then(response => response.json())
                 .then(data => {
+                    //formatar datanacimento em dd/mm/aaaa
+
+                    //foreach data
+                    data.forEach(element => {
+                        if (element.datanascimento!='0000-00-00') {
+                            let dataNascimento = new Date(element.datanascimento);
+                            let dia = dataNascimento.getDate();
+                            let mes = dataNascimento.getMonth() + 1;
+                            let ano = dataNascimento.getFullYear();
+                            element.idade=0;
+                            if (typeof ano!='undefined') {
+                                //adicionar zero à esquerda no dia
+                                if (dia<10) {
+                                    dia = '0' + dia;
+                                }
+                                //adicionar zero à esquerda no mês
+                                if (mes<10) {
+                                    mes = '0' + mes;
+                                }
+                                element.datanascimento = dia + '/' + mes + '/' + ano;
+                                //calcular idade
+                                element.idade = new Date().getFullYear() - ano;
+                            }
+                        } else {
+                            element.datanascimento = 'Desconhecido';
+                            element.idade = 0;
+                        }
+                    });
+
+                    //data.datanascimento = data.datanascimento.split('T')[0].split('-').reverse().join('/');
+                    
                     setDevList(data);
                 }).catch(error => {
                     toast.error("Erro ao listar desenvolvedores")
@@ -59,7 +90,7 @@ function ListarDesenvolvedores() {
     },[history.location.pathname]);
 
     function handleDelete() {
-        setShowHide('hide');
+        setarEsconderMostrar('hide');
         fetch(`http://localhost:3002/api/excluir/desenvolvedor/${delete_id}`, {
             method: 'DELETE'
         }).then(res => {
@@ -120,12 +151,12 @@ function ListarDesenvolvedores() {
         pages.push(i);
     }
     
-    function closeMyModal() {
-        setShowHide('hide');
+    function fecharModal() {
+        setarEsconderMostrar('hide');
     }
     function showModal(id) {
         setDeleteID(id);
-        setShowHide('show');
+        setarEsconderMostrar('show');
     }
 
     
@@ -139,7 +170,7 @@ function ListarDesenvolvedores() {
                         Tem certeza que deseja excluir este desenvolvedor?
                     </div>
                     <div className="myModalFooter right">
-                        <button className="btn btn-default" onClick={closeMyModal}>Fechar</button>
+                        <button className="btn btn-default" onClick={fecharModal}>Fechar</button>
                         <button className="btn btn-success" onClick={handleDelete}>Confirmar</button>
                     </div>
                 </div>
@@ -163,15 +194,35 @@ function ListarDesenvolvedores() {
             </form>
 
             <div className="row">
-                {devList.map((val, key) => {
+                {devList.map((developer, key) => {
+                    
+                    //completa a string idade
+                    let str_idade=''
+                    if (typeof developer.idade!='undefined') {
+                        if (developer.idade>0) {
+                            str_idade=' ('+developer.idade+' anos)'
+                        }
+                    }
+
+                    let str_sexo=''
+                    if (developer.sexo=='m') {
+                        str_sexo='Masculino'
+                    } else if (developer.sexo=='f') {
+                        str_sexo='Feminino'
+                    } else {
+                        str_sexo='Desconhecido'
+                    }
+
                     return (
                         <div key={key} className="col-md-4">
                             <div className="box">
-                                <i className="glyphicon glyphicon-remove" onClick={() => showModal(val.id)}></i>
-                                <i className="glyphicon glyphicon-pencil" onClick={() => handleEdit(val.id)}></i>
-                                <div>Nome: {val.nome}</div>
-                                <div>Hobby: {val.hobby}</div>
-                                <div>Nível: {val.nivel}</div>
+                                <i className="glyphicon glyphicon-remove" onClick={() => showModal(developer.id)}></i>
+                                <i className="glyphicon glyphicon-pencil" onClick={() => handleEdit(developer.id)}></i>
+                                <div><strong>Nível:</strong> {developer.nivel}</div>
+                                <div><strong>Nome:</strong> {developer.nome}</div>
+                                <div><strong>Sexo:</strong> {str_sexo}</div>
+                                <div><strong>Data de nascimento:</strong> {developer.datanascimento}{str_idade}</div>
+                                <div><strong>Hobby:</strong> {developer.hobby}</div>
                             </div>
                             <div className="space"></div>
                         </div>

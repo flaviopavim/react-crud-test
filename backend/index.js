@@ -8,52 +8,50 @@ const PORT = 3002;
 app.use(cors());
 app.use(express.json())
 
-//desenvolvedores de demonstração
 const desenvolvedores = [
     //Eu
-    { nome: 'Flávio Pavim', nivel: 23, hobby: 'Programador' },
-    //Star Wars
-    { nome: 'Luke Skywalker', nivel: 8, hobby: 'Luke' },
-    { nome: 'Darth Vader', nivel: 7, hobby: 'Vader' },
-    { nome: 'Count Dooku', nivel: 6, hobby: 'Dooku' },
-    { nome: 'Darth Maul', nivel: 5, hobby: 'Maul' },
-    { nome: 'Yoda', nivel: 4, hobby: 'Apprentice' },
-    { nome: 'Qui-Gon Jinn', nivel: 3, hobby: 'Jinn' },
-    { nome: 'Mace Windu', nivel: 2, hobby: 'Windu' },
-    { nome: 'Darth Sidious', nivel: 2, hobby: 'Sidious' },
-    { nome: 'Anakin Skywalker', nivel: 1, hobby: 'Skywalker' },
-    { nome: 'Obi-Wan Kenobi', nivel: 1, hobby: 'Kenobi' },
+    { nivel: 1, nome: 'Flávio Pavim', datanascimento:'28/03/1988', sexo:'m', hobby: 'Desenvolver softwares' },
     //Dragon Ball
-    { nome: 'Goku', nivel: 22, hobby: 'Goku' },
-    { nome: 'Vegeta', nivel: 21, hobby: 'Vegeta' },
-    { nome: 'Gohan', nivel: 20, hobby: 'Gohan' },
-    { nome: 'Piccolo', nivel: 19, hobby: 'Piccolo' },
-    { nome: 'Trunks', nivel: 18, hobby: 'Trunks' },
-    { nome: 'Majin Buu', nivel: 17, hobby: 'Majin Buu' },
-    { nome: 'Cell', nivel: 16, hobby: 'Cell' },
-    { nome: 'Frieza', nivel: 15, hobby: 'Frieza' },
-    { nome: 'Android 18', nivel: 14, hobby: 'Android 18' },
-    { nome: 'Android 17', nivel: 13, hobby: 'Android 17' },
-    { nome: 'Android 16', nivel: 12, hobby: 'Android 16' },
-
+    { nivel: 2, nome: 'Goku', datanascimento:'26/12/1954', sexo:'m', hobby: 'Comer' },
+    { nivel: 3, nome: 'Vegeta', datanascimento:'26/12/1954', sexo:'m', hobby: 'Lutar' },
+    { nivel: 4, nome: 'Gohan', datanascimento:'26/12/1954', sexo:'m', hobby: 'Lutar' },
+    { nivel: 5, nome: 'Piccolo', datanascimento:'26/12/1954', sexo:'m', hobby: 'Lutar' },
+    { nivel: 6, nome: 'Trunks', datanascimento:'26/12/1954', sexo:'m', hobby: 'Viajar' },
+    { nivel: 7, nome: 'Majin Buu', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 8, nome: 'Cell', datanascimento:'26/12/1954', sexo:'m', hobby: 'Destruir' },
+    { nivel: 9, nome: 'Frieza', datanascimento:'26/12/1954', sexo:'m', hobby: 'Destruir' },
+    { nivel: 10, nome: 'Android 18', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 11, nome: 'Android 17', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 12, nome: 'Android 16', datanascimento:'26/12/1954', sexo:'m', hobby: 'Destruir' },
+    //Star Wars
+    { nivel: 16, nome: 'Luke Skywalker', datanascimento:'26/12/1954', sexo:'m', hobby: 'Combater os Sith' },
+    { nivel: 16, nome: 'Darth Vader', datanascimento:'26/12/1954', sexo:'m', hobby: 'Destruir' },
+    { nivel: 17, nome: 'Count Dooku', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 17, nome: 'Darth Maul', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 18, nome: 'Yoda', datanascimento:'26/12/1954', sexo:'m', hobby: 'Viajar gostar eu' },
+    { nivel: 18, nome: 'Qui-Gon Jinn', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 19, nome: 'Mace Windu', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 20, nome: 'Darth Sidious', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 21, nome: 'Anakin Skywalker', datanascimento:'26/12/1954', sexo:'m', hobby: '---' },
+    { nivel: 22, nome: 'Obi-Wan Kenobi', datanascimento:'26/12/1954', sexo:'m', hobby: '---' }
 ]
 
 //níveis de demonstração
 const niveis = [
-    'Jedi Padawan',
+    'Jedi Padawan',//23
     'Sith Apprentice',
     'Jedi Knight',
-    'Apprentice',
+    'Apprentice', //20
     'Master',
     'Sith Lord',
     'Jedi',
-    'Jedi Master',
-    'Super Sayajin',
+    'Jedi Master', //16
+    'Super Sayajin', //15
     'Super Sayajin 2',
     'Super Sayajin 3',
     'Super Sayajin 4',
     'Super Sayajin 5',
-    'Super Sayajin 6',
+    'Super Sayajin 6', //10
     'Super Sayajin 7',
     'Super Sayajin 8',
     'Super Sayajin 9',
@@ -62,7 +60,7 @@ const niveis = [
     'Super Sayajin 12',
     'Super Sayajin 13',
     'Super Sayajin 14',
-    'Super Sayajin 15',
+    'Super Sayajin 15', //1
 ]
 
 /////////////////////////////////
@@ -416,7 +414,22 @@ app.listen(PORT, () => {
                     //insere os desenvolvedores de demonstração
                     desenvolvedores.reverse()
                     desenvolvedores.forEach(desenvolvedor => {
-                        db.query(`INSERT INTO desenvolvedores (nome, nivel, hobby) VALUES ('${desenvolvedor.nome}', '${desenvolvedor.nivel}', '${desenvolvedor.hobby}')`, (err, result) => {
+                        //formata datanascimento pra yyyy-mm-dd
+                        let datanascimento = desenvolvedor.datanascimento.split("/")
+                        desenvolvedor.datanascimento = datanascimento[2] + "-" + datanascimento[1] + "-" + datanascimento[0]
+                        db.query(`
+                        INSERT INTO 
+                            desenvolvedores 
+                                (nivel, nome, sexo, datanascimento, hobby) 
+                        VALUES 
+                            (
+                                '${desenvolvedor.nivel}', 
+                                '${desenvolvedor.nome}', 
+                                '${desenvolvedor.sexo}',
+                                '${desenvolvedor.datanascimento}',
+                                '${desenvolvedor.hobby}'
+                            )
+                        `, (err, result) => {
                             if (err) {
                                 console.log(err)
                             }

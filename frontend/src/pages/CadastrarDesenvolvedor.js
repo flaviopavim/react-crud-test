@@ -53,7 +53,7 @@ function CadatrarDesenvolvedor() {
                 data = event.target.value = data.substring(0, 10)
             }
             if (data.length == 10 && Number(data.substring(6, 10)) < 1950) {
-                event.target.value = data.substring(0, 6)+'1950'
+                event.target.value = data.substring(0, 6)+'/1950'
             }
         }
         setarDesenvolvedor({
@@ -76,6 +76,12 @@ function CadatrarDesenvolvedor() {
         } else if (desenvolvedor.hobby=='') {
             toast.error("Digite a o hobby")
         } else {
+            //formata data para yyyy-mm-dd
+            desenvolvedor.datanascimento=
+                desenvolvedor.datanascimento.substring(6, 10)+'-'+
+                desenvolvedor.datanascimento.substring(3, 5)+'-'+
+                desenvolvedor.datanascimento.substring(0, 2)
+
             Axios.post('http://localhost:3002/api/cadastrar/desenvolvedor', { 
                 nivel:desenvolvedor.nivel, 
                 nome: desenvolvedor.nome, 

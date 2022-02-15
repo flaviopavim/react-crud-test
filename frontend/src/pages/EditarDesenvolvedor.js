@@ -76,7 +76,6 @@ function EditarDesenvolvedor() {
             } else {
                 toast.error("Sexo inválido!")
             }
-
         } else if (event.target.name == "datanascimento") {
             //formata a data conforme digita
             let data = event.target.value
@@ -113,6 +112,11 @@ function EditarDesenvolvedor() {
         } else if (desenvolvedor.hobby=='') {
             toast.error("A descrição não pode ser vazia!")
         } else {
+            //formata data para yyyy-mm-dd
+            let dataNascimento = desenvolvedor.datanascimento.split('/')
+            dataNascimento = dataNascimento[2] + '-' + dataNascimento[1] + '-' + dataNascimento[0]
+            desenvolvedor.datanascimento = dataNascimento
+
             const id = window.location.href.split('/')[5]
             Axios.patch('http://localhost:3002/api/editar/desenvolvedor/'+id, { 
                     nivel: nivel_id, 
