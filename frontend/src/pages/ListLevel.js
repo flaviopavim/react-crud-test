@@ -6,44 +6,45 @@ function ListLevel() {
 
     let history = useHistory();
 
-    const [devList, setDevList] = useState([]);
-    const [search, setSearch] = useState({
-        search: ''
-    });
+    const [levelList, setLevelList] = useState([]);
+    const [search, setSearch] = useState('');
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         let action = history.location.pathname.split("/")[1];
         let table = history.location.pathname.split("/")[2];
-        let search = history.location.pathname.split("/")[3];
-        let page = history.location.pathname.split("/")[4];
-        console.log(search);
-        if (action=='search' && table=='level' && typeof search!=undefined) {
-            setSearch({search: search})
-            if (typeof page==undefined) {
-                page = 1;
+        let search_ = history.location.pathname.split("/")[3];
+        setPage(1)
+        if (action=='search' && table=='level' && typeof search_!=undefined) {
+            setSearch(search_)
+            if (typeof history.location.pathname.split("/")[4]!='undefined') {
+                setPage(history.location.pathname.split("/")[4])
             }
             fetch(`http://localhost:3002/api/search/level/${search}/${page}`)
                 .then(res => res.json())
                 .then(data => {
-                    setDevList(data);
+                    setLevelList(data);
                 })
         } else {
-            fetch("http://localhost:3002/api/list/level/1")
+            if (typeof history.location.pathname.split("/")[3]!='undefined') {
+                setPage(history.location.pathname.split("/")[3])
+            }
+            fetch(`http://localhost:3002/api/list/level/${page}`)
                 .then(response => response.json())
                 .then(data => {
-                    setDevList(data);
+                    setLevelList(data);
                 });
         }
-    }, []);
+    },[history.location.pathname]);
     
     function handleDelete(id) {
         fetch(`http://localhost:3002/api/delete/level/${id}`, {
             method: 'DELETE'
         }).then(res => {
-            fetch("http://localhost:3002/api/list/level/1")
+            fetch(`http://localhost:3002/api/list/level/${page}`)
                 .then(response => response.json())
                 .then(data => {
-                    setDevList(data);
+                    setLevelList(data);
             });   
             
         })
@@ -52,18 +53,28 @@ function ListLevel() {
 
     function handleChange(event) {
         event.preventDefault()
-        setSearch({
-            [event.target.name]: event.target.value
-        })
-        console.log(search)
+        setSearch(event.target.value)
     }
 
     function handleSearch(event) {
         event.preventDefault()
-        console.log(search)
-        history.push('/search/level/'+search.search+'/1')
+        history.push('/search/level/'+search+'/'+page)
     }
 
+    function changePage(page){
+        setPage(page)
+        history.push('/list/level/'+page);
+    }
+
+    let links=0
+    if (levelList.length>0) {
+        links = Math.ceil(levelList[0].total/6);
+    }
+
+    let pages=[];
+    for (let i=1; i<=links; i++) {
+        pages.push(i);
+    }
 
     return (
         <div className="container">
@@ -75,7 +86,7 @@ function ListLevel() {
                     <div className="col-md-9">
                         <div className="form-group">
                             <label>Pesquisar:</label>
-                            <input className="form-control" type="text" name="search" value={search.search} onChange={handleChange} />
+                            <input className="form-control" type="text" name="search" value={search} onChange={handleChange} />
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -85,7 +96,7 @@ function ListLevel() {
                 </div>
             </form>
             <div className="row">
-                {devList.map((val, key) => {
+                {levelList.map((val, key) => {
                     return (
                         <div key={key} className="col-md-4">
                             <div className="box">
@@ -99,6 +110,26 @@ function ListLevel() {
                     )
                 }
                 )}
+            </div>
+            <div className="row">
+                <div className="col-md-12">
+                    <div className="pagination right">
+                        <ul className="pagination">
+                            {
+                                //for paginação
+
+
+                                
+                                pages.map((val, key) => {
+                                    return (
+                                        <li key={key} className={page==val ? 'active' : ''}><a onClick={()=>changePage(val)} value={val}>{val}</a></li>
+                                    )
+                                })
+                                
+                            }
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     )

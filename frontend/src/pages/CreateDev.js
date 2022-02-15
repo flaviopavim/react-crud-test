@@ -14,9 +14,7 @@ function CreateDev() {
         description: ''
     })
 
-    const [levels, setLevels] = useState([
-
-    ])
+    const [levels, setLevels] = useState([])
 
     function handleChange(event) {
         setDev({

@@ -79,3 +79,7 @@ h1 {
 .spaceLabel {
   margin-bottom: 25px;
 }
+
+.pagination>li>a {
+  cursor: pointer;
+}

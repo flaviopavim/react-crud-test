@@ -10,7 +10,9 @@ app.use(express.json())
 
 //devs de demonstração
 const devs = [
+    //Eu
     { name: 'Flávio Pavim', level: 1, description: 'Programador' },
+    //Star Wars
     { name: 'Luke Skywalker', level: 2, description: 'Luke' },
     { name: 'Darth Vader', level: 3, description: 'Vader' },
     { name: 'Count Dooku', level: 4, description: 'Dooku' },
@@ -21,7 +23,21 @@ const devs = [
     { name: 'Darth Sidious', level: 6, description: 'Sidious' },
     { name: 'Anakin Skywalker', level: 7, description: 'Skywalker' },
     { name: 'Obi-Wan Kenobi', level: 8, description: 'Kenobi' },
+    //Dragon Ball
+    { name: 'Goku', level: 1, description: 'Goku' },
+    { name: 'Vegeta', level: 2, description: 'Vegeta' },
+    { name: 'Gohan', level: 3, description: 'Gohan' },
+    { name: 'Piccolo', level: 4, description: 'Piccolo' },
+    { name: 'Trunks', level: 4, description: 'Trunks' },
+    { name: 'Majin Buu', level: 5, description: 'Majin Buu' },
+    { name: 'Cell', level: 5, description: 'Cell' },
+    { name: 'Frieza', level: 6, description: 'Frieza' },
+    { name: 'Android 18', level: 6, description: 'Android 18' },
+    { name: 'Android 17', level: 7, description: 'Android 17' },
+    { name: 'Android 16', level: 8, description: 'Android 16' },
+
 ]
+
 
 //níveis de demonstração
 const levels = [
@@ -33,6 +49,21 @@ const levels = [
     { name: 'Sith Lord', description: 'Mestre dos mestres' },
     { name: 'Jedi', description: 'Mestre do mestre do mestre do tio do mestre do mestre do irmão do mestre que um dia foi mestre dos mestres' },
     { name: 'Jedi Master', description: 'O f*dão' },
+    { name: 'Super Sayajin', description: 'Super Sayajin' },
+    { name: 'Super Sayajin 2', description: 'Super Sayajin 2' },
+    { name: 'Super Sayajin 3', description: 'Super Sayajin 3' },
+    { name: 'Super Sayajin 4', description: 'Super Sayajin 4' },
+    { name: 'Super Sayajin 5', description: 'Super Sayajin 5' },
+    { name: 'Super Sayajin 6', description: 'Super Sayajin 6' },
+    { name: 'Super Sayajin 7', description: 'Super Sayajin 7' },
+    { name: 'Super Sayajin 8', description: 'Super Sayajin 8' },
+    { name: 'Super Sayajin 9', description: 'Super Sayajin 9' },
+    { name: 'Super Sayajin 10', description: 'Super Sayajin 10' },
+    { name: 'Super Sayajin 11', description: 'Super Sayajin 11' },
+    { name: 'Super Sayajin 12', description: 'Super Sayajin 12' },
+    { name: 'Super Sayajin 13', description: 'Super Sayajin 13' },
+    { name: 'Super Sayajin 14', description: 'Super Sayajin 14' },
+    { name: 'Super Sayajin 15', description: 'Super Sayajin 15' },
 ]
 
 /////////////////////////////////
@@ -42,16 +73,18 @@ const levels = [
 //lista todos os devs
 app.get("/api/list/dev/:pgn", (req, res) => {
     //lista todos os devs com seus níveis
+    let pgn=(req.params.pgn-1)*6
     db.query(`
     SELECT 
         d.id,d.name,
         l.name AS level,
-        d.description 
+        d.description,
+        (SELECT COUNT(id) FROM dev) AS total
     FROM 
         dev d 
             LEFT JOIN level l ON l.id=d.level 
     ORDER BY d.id DESC
-    LIMIT ${req.params.pgn},10
+    LIMIT ${pgn},6
     `, (err, result) => {
         if (err) {
             console.log(err)
@@ -63,12 +96,22 @@ app.get("/api/list/dev/:pgn", (req, res) => {
 
 //busca por devs
 app.get("/api/search/dev/:search/:pgn", (req, res) => {
+    let pgn=(req.params.pgn-1)*6
     db.query(`
     SELECT 
         d.id,
         d.name,
         l.name AS level,
-        d.description
+        d.description,
+        (SELECT 
+            COUNT(d.id)
+        FROM 
+            dev d
+                LEFT JOIN level l ON l.id=d.level
+        WHERE 
+            d.name LIKE '%${req.params.search}%' OR
+            d.description LIKE '%${req.params.search}%' OR
+            l.name LIKE '%${req.params.search}%') AS total
     FROM 
         dev d
             LEFT JOIN level l ON l.id=d.level
@@ -77,7 +120,7 @@ app.get("/api/search/dev/:search/:pgn", (req, res) => {
         d.description LIKE '%${req.params.search}%' OR
         l.name LIKE '%${req.params.search}%'
     ORDER BY d.id DESC
-    LIMIT ${req.params.pgn},10
+    LIMIT ${pgn},6
     `, (err, result) => {
         if (err) {
             console.log(err)
@@ -163,11 +206,13 @@ app.get("/api/list/level/:pgn", (req, res) => {
     //se não houver erro, lista todos os níveis
     let limit=''
     if (req.params.pgn!='all') {
-        limit=`LIMIT ${req.params.pgn},10`
+        let pgn=(req.params.pgn-1)*6
+        limit=`LIMIT ${pgn},6`
     }
     db.query(`
     SELECT 
-        * 
+        *,
+        (SELECT COUNT(id) FROM level) AS total
     FROM 
         level 
     ORDER BY id DESC
@@ -191,7 +236,7 @@ app.get("/api/search/level/:search/:pgn", (req, res) => {
         name LIKE '%`+req.params.search+`%' OR 
         description LIKE '%`+req.params.search+`%' 
     ORDER BY id DESC
-    LIMIT ${req.params.pgn},10
+    LIMIT ${req.params.pgn},6
     `, (err, result) => {
         if (err) {
             console.log(err)

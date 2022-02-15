@@ -7,20 +7,18 @@ function ListDev() {
     let history = useHistory();
 
     const [devList, setDevList] = useState([]);
-    const [search, setSearch] = useState({
-        search: ''
-    });
+    const [search, setSearch] = useState('');
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         let action = history.location.pathname.split("/")[1];
         let table = history.location.pathname.split("/")[2];
-        let search = history.location.pathname.split("/")[3];
-        let page = history.location.pathname.split("/")[4];
-        console.log(search);
-        if (action=='search' && table=='dev' && typeof search!=undefined) {
-            setSearch({search: search})
-            if (typeof page==undefined) {
-                page = 1;
+        let search_ = history.location.pathname.split("/")[3];
+        setPage(1)
+        if (action=='search' && table=='dev' && typeof search_!='undefined') {
+            setSearch(search_)
+            if (typeof history.location.pathname.split("/")[4]!='undefined') {
+                setPage(history.location.pathname.split("/")[4])
             }
             fetch(`http://localhost:3002/api/search/dev/${search}/${page}`)
                 .then(res => res.json())
@@ -28,43 +26,70 @@ function ListDev() {
                     setDevList(data);
                 })
         } else {
-            fetch("http://localhost:3002/api/list/dev/1")
+            if (typeof history.location.pathname.split("/")[3]!='undefined') {
+                setPage(history.location.pathname.split("/")[3])
+            }
+            fetch(`http://localhost:3002/api/list/dev/${page}`)
                 .then(response => response.json())
                 .then(data => {
-                setDevList(data);
-            });
+                    setDevList(data);
+                });
         }
-    }, [history.location.pathname]);
+    },[history.location.pathname]);
 
     function handleDelete(id) {
         fetch(`http://localhost:3002/api/delete/dev/${id}`, {
             method: 'DELETE'
         }).then(res => {
-            fetch("http://localhost:3002/api/list/dev/1")
+            fetch(`http://localhost:3002/api/list/dev/${page}`)
                 .then(response => response.json())
                 .then(data => {
                     setDevList(data);
-            });   
+            });
         })
-        
     }
 
-    function handleEdit(id) {
-        history.push('/edit/dev/'+id);
+    function handleEdit(pg) {
+        //pg.preventDefault()
+        setPage(pg);
+        history.push('/edit/dev/'+pg);
     }
 
     function handleChange(event) {
         event.preventDefault()
-        setSearch({
-            [event.target.name]: event.target.value
-        })
-        console.log(search)
+        setSearch(event.target.value)
     }
 
     function handleSearch(event) {
         event.preventDefault()
-        console.log(search)
-        history.push('/search/dev/'+search.search+'/1')
+        if (page!='') {
+            history.push('/search/dev/'+search+'/'+page);
+        } else {
+            history.push('/search/dev/'+search);
+        }
+        
+    }
+
+    
+    function changePage(pg){
+        setPage(pg)
+        if (search!='') {
+            history.push('/search/dev/'+search+'/'+pg);
+        } else {
+            history.push('/list/dev/'+pg);
+        }
+        
+    
+    }
+
+    let links=0
+    if (devList.length>0) {
+        links = Math.ceil(devList[0].total/6);
+    }
+
+    let pages=[];
+    for (let i=1; i<=links; i++) {
+        pages.push(i);
     }
 
     return (
@@ -77,7 +102,7 @@ function ListDev() {
                     <div className="col-md-9">
                         <div className="form-group">
                             <label>Pesquisar:</label>
-                            <input className="form-control" type="text" name="search" value={search.search} onChange={handleChange} />
+                            <input className="form-control" type="text" name="search" value={search} onChange={handleChange} placeholder="Digite um nome, descrição ou nível" />
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -104,6 +129,24 @@ function ListDev() {
                 }
                 )}
             </div>
+
+            <div className="row">
+                <div className="col-md-12">
+                    <div className="pagination right">
+                        <ul className="pagination">
+                            {
+                                pages.map((val, key) => {
+                                    return (
+                                        <li key={key} className={page==val ? 'active' : ''}><a onClick={()=>changePage(val)} value={val}>{val}</a></li>
+                                    )
+                                })
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            
         </div>
     )
 }
