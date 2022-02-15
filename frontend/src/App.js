@@ -19,18 +19,18 @@ const App = () => {
       <Top />
       <Router>
         <Route path="/" exact render={(props) => <ListDev />} />
-        <Route path="/list/level" exact render={(props) => <ListLevel />} />
-        <Route path="/list/level/:pgn" exact render={(props) => <ListLevel />} />
-        <Route path="/search/level/:search" exact render={(props) => <ListLevel />} />
-        <Route path="/search/level/:search/:pgn" exact render={(props) => <ListLevel />} />
-        <Route path="/create/level" render={(props) => <CreateLevel />} />
-        <Route path="/edit/level/:id" render={(props) => <EditLevel />} />
-        <Route path="/list/dev" exact render={(props) => <ListDev />} />
-        <Route path="/list/dev/:pgn" exact render={(props) => <ListDev />} />
-        <Route path="/search/dev/:search" exact render={(props) => <ListDev />} />
-        <Route path="/search/dev/:search/:pgn" exact render={(props) => <ListDev />} />
-        <Route path="/create/dev" render={(props) => <CreateDev />} />
-        <Route path="/edit/dev/:id" render={(props) => <EditDev />} />
+        <Route path="/listar/niveis" exact render={(props) => <ListLevel />} />
+        <Route path="/listar/niveis/:paginacao" exact render={(props) => <ListLevel />} />
+        <Route path="/buscar/niveis/:busca" exact render={(props) => <ListLevel />} />
+        <Route path="/buscar/niveis/:busca/:paginacao" exact render={(props) => <ListLevel />} />
+        <Route path="/cadastrar/nivel" render={(props) => <CreateLevel />} />
+        <Route path="/editar/nivel/:id" render={(props) => <EditLevel />} />
+        <Route path="/listar/desenvolvedores" exact render={(props) => <ListDev />} />
+        <Route path="/listar/desenvolvedores/:paginacao" exact render={(props) => <ListDev />} />
+        <Route path="/buscar/desenvolvedores/:busca" exact render={(props) => <ListDev />} />
+        <Route path="/buscar/desenvolvedores/:busca/:paginacao" exact render={(props) => <ListDev />} />
+        <Route path="/cadastrar/desenvolvedor" render={(props) => <CreateDev />} />
+        <Route path="/editar/desenvolvedor/:id" render={(props) => <EditDev />} />
       </Router>
     </div>
   )

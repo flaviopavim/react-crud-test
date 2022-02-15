@@ -13,8 +13,8 @@ export default function Top() {
                 </div>
                 <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul className="nav navbar-nav">
-                        <li><a href="/list/dev">Desenvolvedores</a></li>
-                        <li><a href="/list/level">Níveis</a></li>
+                        <li><a href="/listar/desenvolvedores">Desenvolvedores</a></li>
+                        <li><a href="/listar/niveis">Níveis</a></li>
                     </ul>
                 </div>
             </div>

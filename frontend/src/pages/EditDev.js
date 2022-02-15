@@ -19,30 +19,31 @@ function EditDev() {
      
     let history = useHistory();
 
-    const [dev, setDev] = useState({
-        id: '',
-        name: '',
-        level: '',
-        description: ''
+    const [desenvolvedor, setDesenvolvedor] = useState({
+        nivel: '',
+        nome: '',
+        sexo: '',
+        datanascimento: '',
+        hobby: ''
     })
 
-    const [levels, setLevels] = useState([])
-    const [level_id, setLevelID] = useState(0)
+
+    const [niveis, setNiveis] = useState([])
+    const [nivel_id, setNivelID] = useState(0)
 
     useEffect(() => {
         const id = window.location.href.split('/')[5]
-        Axios.get('http://localhost:3002/api/dev/' + id)
+        Axios.get('http://localhost:3002/api/desenvolvedor/' + id)
             .then(response => {
-                setDev(response.data[0])
-                Axios.get('http://localhost:3002/api/list/level/all').then(response2 => {
-                    setLevels([]);
-                    response2.data.forEach(level => {
-                        console.log(level)
-                        setLevels(levels => [...levels, { value: level.id, label: level.name }])
+                setDesenvolvedor(response.data[0])
+                Axios.get('http://localhost:3002/api/listar/niveis/todos').then(response2 => {
+                    setNiveis([]);
+                    response2.data.forEach(nivel => {
+                        setNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
 
-                        //seleciona o level
-                        if (level.name == response.data[0].level) {
-                            setLevelID(level.id)
+                        //seleciona o nivel
+                        if (nivel.name == response.data[0].nivel) {
+                            setNivelID(nivel.id)
                         }
 
                     })
@@ -56,31 +57,31 @@ function EditDev() {
     }, [])
     
     function handleChange(event) {
-        setDev({
-            ...dev,
+        setDesenvolvedor({
+            ...desenvolvedor,
             [event.target.name]: event.target.value
         })
-        //set level id
-        if (event.target.name == 'level') {
-            setLevelID(event.target.value)
+        //set nivel id
+        if (event.target.name == 'nivel') {
+            setNivelID(event.target.value)
         }
         
     }
 
     function handleSubmit(event) {
         event.preventDefault()
-        console.log(dev)
+        console.log(desenvolvedor)
 
-        if (dev.name=='') {
+        if (desenvolvedor.name=='') {
             toast.error("O nome não pode ser vazio!")
-        } else if (dev.level=='') {
-            toast.error("O level não pode ser vazio!")
-        } else if (dev.description=='') {
+        } else if (desenvolvedor.nivel=='') {
+            toast.error("O nivel não pode ser vazio!")
+        } else if (desenvolvedor.description=='') {
             toast.error("A descrição não pode ser vazia!")
         } else {
             const id = window.location.href.split('/')[5]
-            Axios.patch('http://localhost:3002/api/edit/dev/'+id, 
-                { name: dev.name, level: level_id, description: dev.description }
+            Axios.patch('http://localhost:3002/api/edit/desenvolvedor/'+id, 
+                { name: desenvolvedor.name, nivel: nivel_id, description: desenvolvedor.description }
             ).then(response => {
                 toast.success("Desenvolvedor editado com sucesso!")
                 history.push("/")
@@ -93,28 +94,36 @@ function EditDev() {
     return (
         <div className="container">
             <h2>Editar desenvolvedor</h2>
-            <a href="/list/dev" className="btn btn-xs btn-default">Ver desenvolvedores</a>
+            <a href="/listar/desenvolvedores" className="btn btn-xs btn-default">Ver desenvolvedores</a>
             <div className="space"></div>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label>Nome do desenvolvedor:</label>
-                    <input className="form-control" type="text" name="name" value={dev.name} onChange={handleChange} />
-                </div>
-                <div className="form-group">
                     <label>Nível:</label>
-                    <select className="form-control" name="level" value={level_id} onChange={handleChange}>
+                    <select className="form-control" name="nivel" value={desenvolvedor.nivel} onChange={handleChange}>
                         {
-                            levels.map(level => {
-                                return <option key={level.value} value={level.value}>{level.label}</option>
+                            niveis.map(nivel => {
+                                return <option key={nivel.value} value={nivel.value}>{nivel.label}</option>
                             })
                         }
                     </select>
                 </div>
                 <div className="form-group">
-                    <label>Descrição:</label>
-                    <textarea className="form-control" name="description" value={dev.description} onChange={handleChange} />
+                    <label>Nome do desenvolvedor:</label>
+                    <input className="form-control" type="text" name="nome" value={desenvolvedor.nome} onChange={handleChange} />
                 </div>
-                <input className="btn btn-success right" type="submit" value="Editar desenvolvedor" />
+                <div className="form-group">
+                    <label>Sexo:</label>
+                    <input className="form-control" type="text" name="sexo" value={desenvolvedor.sexo} onChange={handleChange} />
+                </div>
+                <div className="form-group">
+                    <label>Data de nascimento:</label>
+                    <input className="form-control" type="text" name="datanascimento" value={desenvolvedor.datanascimento} onChange={handleChange} />
+                </div>
+                <div className="form-group">
+                    <label>Descrição:</label>
+                    <textarea className="form-control" name="hobby" onChange={handleChange}>{desenvolvedor.hobby}</textarea>
+                </div>
+                <input className="btn btn-success right" type="submit" value="Cadastrar desenvolvedor" />
             </form>
         </div>
     )

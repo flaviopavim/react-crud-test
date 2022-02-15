@@ -19,39 +19,35 @@ function EditLevel() {
 
     let history = useHistory();
 
-    const [level, setDev] = useState({
-        name: '',
-        description: ''
-    })
+    const [nivel, setNivel] = useState('')
 
     useEffect(() => {
         const id = window.location.href.split('/')[5]
-        Axios.get('http://localhost:3002/api/level/' + id)
+        Axios.get('http://localhost:3002/api/nivel/' + id)
             .then(response => {
-                setDev(response.data[0])
+                setNivel(response.data[0].nivel)
+            })
+            .catch(error => {
+                toast.error("Erro ao listar os níveis!")
             })
     }, [])
 
+
     function handleChange(event) {
-        setDev({
-            ...level,
-            [event.target.name]: event.target.value
-        })
+        setNivel(event.target.value)
     }
 
     function handleSubmit(event) {
         event.preventDefault()
         const id = window.location.href.split('/')[5]
-        if (level.name=='') {
+        if (nivel=='') {
             toast.error("O título não pode ser vazio!")
-        } else if (level.description=='') {
-            toast.error("A descrição não pode ser vazia!")
         } else {
-            Axios.patch('http://localhost:3002/api/edit/level/'+id, 
-                { name: level.name, description: level.description }
+            Axios.patch('http://localhost:3002/api/editar/nivel/'+id, 
+                { nivel: nivel }
             ).then(response => {
-                toast.success("Editado com sucesso!")
-                history.push("/list/level")
+                toast.success("Nível editado com sucesso!")
+                history.push("/listar/niveis")
             }).catch(error => {
                 toast.error("Erro ao editar!")
                 toast.error(error)
@@ -63,15 +59,11 @@ function EditLevel() {
         <div className="container">
             <form onSubmit={handleSubmit}>
             <h2>Editar nível</h2>
-            <a href="/list/level" className="btn btn-xs btn-default">Ver níveis</a>
+            <a href="/listar/niveis" className="btn btn-xs btn-default">Ver níveis</a>
             <div className="space"></div>
             <div className="form-group">
                     <label>Título do nível:</label>
-                    <input className="form-control" type="text" name="name" value={level.name} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                    <label>Descrição:</label>
-                    <textarea className="form-control" type="text" name="description" value={level.description} onChange={handleChange} />
+                    <input className="form-control" type="text" name="name" value={nivel} onChange={handleChange} />
                 </div>
                 <input className="btn btn-success right" type="submit" value="Editar nível" />
             </form>

@@ -19,30 +19,18 @@ function CreateLevel() {
 
     let history = useHistory();
 
-    const [level, setLevel] = useState({
-        name: '',
-        description: ''
-    })
+    const [nivel, setNivel] = useState('')
 
     function handleChange(event) {
-        setLevel({
-            ...level,
-            [event.target.name]: event.target.value
-        })
+        setNivel(event.target.value)
     }
 
     function handleSubmit(event) {
         event.preventDefault()
-        console.log(level)
-
-        //post para o backend
-        
-
-        Axios.post('http://localhost:3002/api/create/level', 
-            { name: level.name, description: level.description }
-        ).then(response => {
-            toast("Atualizado com sucesso!");
-            history.push("/list/level")
+    
+        Axios.post('http://localhost:3002/api/cadastrar/nivel', { nivel: nivel }).then(response => {
+            toast.success("Cadastrado com sucesso!");
+            history.push("/listar/niveis")
         })
         
     }
@@ -50,16 +38,12 @@ function CreateLevel() {
     return (
         <div className="container">
             <h2>Cadastrar nível</h2>
-            <a href="/list/level" className="btn btn-xs btn-default">Ver níveis</a>
+            <a href="/listar/niveis" className="btn btn-xs btn-default">Ver níveis</a>
             <div className="space"></div>
             <form onSubmit={handleSubmit}>
             <div className="form-group">
                     <label>Título do nível:</label>
-                    <input className="form-control" type="text" name="name" value={level.name} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                    <label>Descrição:</label>
-                    <input className="form-control" type="text" name="description" value={level.description} onChange={handleChange} />
+                    <input className="form-control" type="text" name="nivel" value={nivel} onChange={handleChange} />
                 </div>
                 <input className="btn btn-success right" type="submit" value="Cadastrar nível" />
             </form>

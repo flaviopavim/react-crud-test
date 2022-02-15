@@ -35,7 +35,7 @@ function ListDev() {
             if (typeof history.location.pathname.split("/")[4]!='undefined') {
                 setPage(history.location.pathname.split("/")[4])
             }
-            fetch(`http://localhost:3002/api/search/dev/${search}/${page}`)
+            fetch(`http://localhost:3002/api/buscar/desenvolvedores/${search}/${page}`)
                 .then(res => res.json())
                 .then(data => {
                     setDevList(data);
@@ -47,7 +47,7 @@ function ListDev() {
             if (typeof history.location.pathname.split("/")[3]!='undefined') {
                 setPage(history.location.pathname.split("/")[3])
             }
-            fetch(`http://localhost:3002/api/list/dev/${page}`)
+            fetch(`http://localhost:3002/api/listar/desenvolvedores/${page}`)
                 .then(response => response.json())
                 .then(data => {
                     setDevList(data);
@@ -60,11 +60,11 @@ function ListDev() {
 
     function handleDelete() {
         setShowHide('hide');
-        fetch(`http://localhost:3002/api/delete/dev/${delete_id}`, {
+        fetch(`http://localhost:3002/api/excluir/desenvolvedor/${delete_id}`, {
             method: 'DELETE'
         }).then(res => {
             toast.success("Desenvolvedor excluído com sucesso!");
-            fetch(`http://localhost:3002/api/list/dev/${page}`)
+            fetch(`http://localhost:3002/api/listar/desenvolvedores/${page}`)
             .then(response => response.json())
             .then(data => {
                 setDevList(data)
@@ -80,7 +80,7 @@ function ListDev() {
 
     function handleEdit(pg) {
         setPage(pg);
-        history.push('/edit/dev/'+pg);
+        history.push('/editar/desenvolvedor/'+pg);
     }
 
     function handleChange(event) {
@@ -91,9 +91,9 @@ function ListDev() {
     function handleSearch(event) {
         event.preventDefault()
         if (page!='') {
-            history.push('/search/dev/'+search+'/'+page);
+            history.push('/buscar/desenvolvedores/'+search+'/'+page);
         } else {
-            history.push('/search/dev/'+search);
+            history.push('/buscar/desenvolvedores/'+search);
         }
         
     }
@@ -102,9 +102,9 @@ function ListDev() {
     function changePage(pg){
         setPage(pg)
         if (search!='') {
-            history.push('/search/dev/'+search+'/'+pg);
+            history.push('/buscar/desenvolvedores/'+search+'/'+pg);
         } else {
-            history.push('/list/dev/'+pg);
+            history.push('/listar/desenvolvedores/'+pg);
         }
         
     
@@ -145,7 +145,7 @@ function ListDev() {
                 </div>
             </div>
             <h2>Desenvolvedores</h2>
-            <a href="/create/dev" className="btn btn-xs btn-default">Cadastrar desenvolvedor</a>
+            <a href="/cadastrar/desenvolvedor" className="btn btn-xs btn-default">Cadastrar desenvolvedor</a>
             <div className="space"></div>
             <form>
                 <div className="row">
@@ -169,9 +169,9 @@ function ListDev() {
                             <div className="box">
                                 <i className="glyphicon glyphicon-remove" onClick={() => showModal(val.id)}></i>
                                 <i className="glyphicon glyphicon-pencil" onClick={() => handleEdit(val.id)}></i>
-                                <div>Nome: {val.name}</div>
-                                <div>Descrição: {val.description}</div>
-                                <div>Nível: {val.level}</div>
+                                <div>Nome: {val.nome}</div>
+                                <div>Hobby: {val.hobby}</div>
+                                <div>Nível: {val.nivel}</div>
                             </div>
                             <div className="space"></div>
                         </div>
