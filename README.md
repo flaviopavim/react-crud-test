@@ -25,7 +25,7 @@ Endpoint: /api/listar/desenvolvedores/:paginacao
 Método - GET
 
 Função: Listar desenvolvedores
-
+---------------------------------------------
 
 
 Endpoint: /api/buscar/desenvolvedores/:busca/:paginacao
@@ -33,7 +33,7 @@ Endpoint: /api/buscar/desenvolvedores/:busca/:paginacao
 Método - GET
 
 Função: Busca por desenvolvedores
-
+---------------------------------------------
 
 
 Endpoint: /api/desenvolvedor/:id
@@ -41,6 +41,7 @@ Endpoint: /api/desenvolvedor/:id
 Método - GET
 
 Função: Listar desenvolvedor
+---------------------------------------------
 
 
 
@@ -49,6 +50,7 @@ Endpoint: /api/cadastrar/desenvolvedor
 Método - POST
 
 Função: Criar desenvolvedor
+---------------------------------------------
 
 
 
@@ -57,6 +59,7 @@ Endpoint: /api/editar/desenvolvedor
 Método - PATCH
 
 Função: Editar desenvolvedor
+---------------------------------------------
 
 
 
@@ -65,6 +68,7 @@ Endpoint: /api/excluir/desenvolvedor/:id
 Método - DELETE
 
 Função: Editar desenvolvedor
+---------------------------------------------
 
 
 
@@ -78,6 +82,7 @@ Endpoint: /api/listar/niveis/:paginacao
 Método - GET
 
 Função: Listar níveis
+---------------------------------------------
 
 
 
@@ -86,6 +91,7 @@ Endpoint: /api/buscar/nivel/:busca/:paginacao
 Método - GET
 
 Função: Busca níveis
+---------------------------------------------
 
 
 
@@ -94,6 +100,7 @@ Endpoint: /api/nivel/:id
 Método - GET
 
 Função: Listar nível
+---------------------------------------------
 
 
 
@@ -102,6 +109,7 @@ Endpoint: /api/cadastrar/nivel
 Método - POST
 
 Função: Criar nível
+---------------------------------------------
 
 
 
@@ -110,6 +118,7 @@ Endpoint: /api/editar/nivel/:id
 Método - PATCH
 
 Função: Editar nível
+---------------------------------------------
 
 
 
