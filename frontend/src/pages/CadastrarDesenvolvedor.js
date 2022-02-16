@@ -3,7 +3,7 @@ import Axios from 'axios'
 import '../App.css'
 import { useHistory } from "react-router-dom";
 import { toast } from 'react-toastify';
-import { formataData,formataDataBanco } from '../functions'
+import { formataData,formataDataBanco } from '../Funcoes'
 import 'react-toastify/dist/ReactToastify.css';
 
 function CadatrarDesenvolvedor() {
