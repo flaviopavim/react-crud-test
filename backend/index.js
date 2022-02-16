@@ -65,7 +65,7 @@ const niveis = [
 
 app.get("/", (req, res) => {
     res.status(200).send({
-        "message": "Hello World! Essa é API de desenvolvedores"
+        "message": "Hello World! Essa é API de desenvolvedores, acesse o Frontend no endereço: http://localhost:3000"
     })
 })
 
