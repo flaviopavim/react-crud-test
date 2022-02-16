@@ -15,46 +15,50 @@ function ListarDesenvolvedores() {
         draggable: true,
         progress: undefined,
     });
-    
 
-    let history = useHistory();
+    let historico = useHistory();
 
-    const [devList, setDevList] = useState([]);
-    const [search, setSearch] = useState('');
-    const [page, setPage] = useState(1);
-    const [delete_id, setDeleteID] = useState('');
-    const [showHide, setarEsconderMostrar] = useState('hide');
+    const [desenvolvedoresLista, setarDesenvolvedorLista] = useState([]);
+    const [busca, setarBusca] = useState('');
+    const [paginacao, setarPaginacao] = useState(1);
+    const [excluir_id, setarExcluirID] = useState('');
+    const [esconderMorstrar, setarEsconderMostrar] = useState('hide');
 
     useEffect(() => {
-        let action = history.location.pathname.split("/")[1];
-        let table = history.location.pathname.split("/")[2];
-        let search_ = history.location.pathname.split("/")[3];
-        setPage(1)
-        if (action=='search' && table=='dev' && typeof search_!='undefined') {
-            setSearch(search_)
-            if (typeof history.location.pathname.split("/")[4]!='undefined') {
-                setPage(history.location.pathname.split("/")[4])
+        let acao = historico.location.pathname.split("/")[1];
+        let tabela = historico.location.pathname.split("/")[2];
+        let busca_ = historico.location.pathname.split("/")[3];
+        setarPaginacao(1)
+        if (acao=='buscar' && tabela=='dev' && typeof busca_!='undefined') {
+            setarBusca(busca_)
+            if (typeof historico.location.pathname.split("/")[4]=='undefined' || 
+                historico.location.pathname.split("/")[4]=='' ||
+                historico.location.pathname.split("/")[4]==0
+            ) {
+                historico.push(`/buscar/desenvolvedores/1`)
             }
-            fetch(`http://localhost:3002/api/buscar/desenvolvedores/${search}/${page}`)
+            setarPaginacao(historico.location.pathname.split("/")[4])
+            fetch(`http://localhost:3002/api/buscar/desenvolvedores/${busca}/${paginacao}`)
                 .then(res => res.json())
                 .then(data => {
-                    setDevList(data);
+                    setarDesenvolvedorLista(data);
                 }).catch(error => {
-                    toast.error('Erro ao buscar desenvolvedores');
-                    toast.error(error)
+                    toast.error('Erro ao buscar desenvolvedores')
                 })
         } else {
-            if (typeof history.location.pathname.split("/")[3]!='undefined') {
-                setPage(history.location.pathname.split("/")[3])
+            if (typeof historico.location.pathname.split("/")[3]=='undefined' || 
+                historico.location.pathname.split("/")[3]=='' ||
+                historico.location.pathname.split("/")[3]==0
+            ) {
+                historico.push(`/listar/desenvolvedores/1`)
             }
-            fetch(`http://localhost:3002/api/listar/desenvolvedores/${page}`)
+            setarPaginacao(historico.location.pathname.split("/")[3])
+            fetch(`http://localhost:3002/api/listar/desenvolvedores/${paginacao}`)
                 .then(response => response.json())
                 .then(data => {
-                    //formatar datanacimento em dd/mm/aaaa
-
-                    //foreach data
                     data.forEach(element => {
                         if (element.datanascimento!='0000-00-00') {
+                            //formatar datanacimento em dd/mm/aaaa
                             let dataNascimento = new Date(element.datanascimento);
                             let dia = dataNascimento.getDate();
                             let mes = dataNascimento.getMonth() + 1;
@@ -78,84 +82,78 @@ function ListarDesenvolvedores() {
                             element.idade = 0;
                         }
                     });
-
-                    //data.datanascimento = data.datanascimento.split('T')[0].split('-').reverse().join('/');
-                    
-                    setDevList(data);
+                    setarDesenvolvedorLista(data);
                 }).catch(error => {
                     toast.error("Erro ao listar desenvolvedores")
-                    toast.error(error)
                 });
         }
-    },[history.location.pathname]);
+    },[historico.location.pathname]);
 
-    function handleDelete() {
+    function manipularExclusao() {
         setarEsconderMostrar('hide');
-        fetch(`http://localhost:3002/api/excluir/desenvolvedor/${delete_id}`, {
+        fetch(`http://localhost:3002/api/excluir/desenvolvedor/${excluir_id}`, {
             method: 'DELETE'
         }).then(res => {
             toast.success("Desenvolvedor excluído com sucesso!");
-            fetch(`http://localhost:3002/api/listar/desenvolvedores/${page}`)
+            fetch(`http://localhost:3002/api/listar/desenvolvedores/${paginacao}`)
             .then(response => response.json())
             .then(data => {
-                setDevList(data)
+                setarDesenvolvedorLista(data)
             }).catch(error => {
-                toast.error('Erro ao excluir desenvolvedor');
-                toast.error(error);
+                toast.error('Erro ao excluir desenvolvedor')
             });
         }).catch(error => {
-            toast.error("Não foi possível excluir o desenvolvedor");
-            toast.error(error)
+            toast.error("Não foi possível excluir o desenvolvedor")
         })
     }
 
-    function handleEdit(pg) {
-        setPage(pg);
-        history.push('/editar/desenvolvedor/'+pg);
+    function manipularEdicao(paginacao) {
+        setarPaginacao(paginacao);
+        historico.push(`/editar/desenvolvedor/${paginacao}`);
     }
 
-    function handleChange(event) {
+    function manipularMudanca(event) {
         event.preventDefault()
-        setSearch(event.target.value)
+        setarBusca(event.target.value)
     }
 
-    function handleSearch(event) {
+    function manipularBusca(event) {
         event.preventDefault()
-        if (page!='') {
-            history.push('/buscar/desenvolvedores/'+search+'/'+page);
+        if (paginacao!='') {
+            historico.push(`/buscar/desenvolvedores/${busca}/${paginacao}`)
         } else {
-            history.push('/buscar/desenvolvedores/'+search);
+            historico.push(`/buscar/desenvolvedores/${busca}`)
         }
         
     }
 
     
-    function changePage(pg){
-        setPage(pg)
-        if (search!='') {
-            history.push('/buscar/desenvolvedores/'+search+'/'+pg);
+    function changePage(paginacao){
+        setarPaginacao(paginacao)
+        if (busca!='') {
+            historico.push(`/buscar/desenvolvedores/${busca}/${paginacao}`)
         } else {
-            history.push('/listar/desenvolvedores/'+pg);
+            historico.push('/listar/desenvolvedores/'+paginacao);
         }
         
     
     }
 
     let links=0
-    if (devList.length>0) {
-        links = Math.ceil(devList[0].total/6);
+    if (desenvolvedoresLista.length>0) {
+        links = Math.ceil(desenvolvedoresLista[0].total/6);
     }
 
-    let pages=[];
+    let paginas=[];
     for (let i=1; i<=links; i++) {
-        pages.push(i);
+        paginas.push(i);
     }
     
     function fecharModal() {
         setarEsconderMostrar('hide');
     }
     function showModal(id) {
-        setDeleteID(id);
+        setarExcluirID(id);
         setarEsconderMostrar('show');
     }
 
@@ -163,7 +161,7 @@ function ListarDesenvolvedores() {
 
     return (
         <div className="container">
-            <div className={"myModalBG "+showHide}>
+            <div className={"myModalBG "+esconderMorstrar}>
                 <div className="myModal">
                     <div className="myModalTitle">Excluir</div>
                     <div className="myModalBody">
@@ -171,7 +169,7 @@ function ListarDesenvolvedores() {
                     </div>
                     <div className="myModalFooter right">
                         <button className="btn btn-default" onClick={fecharModal}>Fechar</button>
-                        <button className="btn btn-success" onClick={handleDelete}>Confirmar</button>
+                        <button className="btn btn-success" onClick={manipularExclusao}>Confirmar</button>
                     </div>
                 </div>
             </div>
@@ -183,18 +181,18 @@ function ListarDesenvolvedores() {
                     <div className="col-md-9">
                         <div className="form-group">
                             <label>Pesquisar:</label>
-                            <input className="form-control" type="text" name="search" value={search} onChange={handleChange} placeholder="Digite um nome, descrição ou nível" />
+                            <input className="form-control" type="text" name="busca" value={busca} onChange={manipularMudanca} placeholder="Digite um nome, descrição ou nível" />
                         </div>
                     </div>
                     <div className="col-md-3">
                         <div className="spaceLabel"></div>
-                        <button onClick={handleSearch} type="submit" className="btn btn-block btn-default">Pesquisar</button>
+                        <button onClick={manipularBusca} type="submit" className="btn btn-block btn-default">Pesquisar</button>
                     </div>
                 </div>
             </form>
 
             <div className="row">
-                {devList.map((developer, key) => {
+                {desenvolvedoresLista.map((developer, key) => {
                     
                     //completa a string idade
                     let str_idade=''
@@ -217,7 +215,7 @@ function ListarDesenvolvedores() {
                         <div key={key} className="col-md-4">
                             <div className="box">
                                 <i className="glyphicon glyphicon-remove" onClick={() => showModal(developer.id)}></i>
-                                <i className="glyphicon glyphicon-pencil" onClick={() => handleEdit(developer.id)}></i>
+                                <i className="glyphicon glyphicon-pencil" onClick={() => manipularEdicao(developer.id)}></i>
                                 <div><strong>Nível:</strong> {developer.nivel}</div>
                                 <div><strong>Nome:</strong> {developer.nome}</div>
                                 <div><strong>Sexo:</strong> {str_sexo}</div>
@@ -236,9 +234,9 @@ function ListarDesenvolvedores() {
                     <div className="pagination right">
                         <ul className="pagination">
                             {
-                                pages.map((val, key) => {
+                                paginas.map((val, key) => {
                                     return (
-                                        <li key={key} className={page==val ? 'active' : ''}><a onClick={()=>changePage(val)} value={val}>{val}</a></li>
+                                        <li key={key} className={paginacao==val ? 'active' : ''}><a onClick={()=>changePage(val)} value={val}>{val}</a></li>
                                     )
                                 })
                             }

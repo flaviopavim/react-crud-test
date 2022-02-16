@@ -27,27 +27,39 @@ function ListarNiveis() {
     useEffect(() => {
         let action = historico.location.pathname.split("/")[1];
         let tabela = historico.location.pathname.split("/")[2];
-        let search_ = historico.location.pathname.split("/")[3];
+        let busca_ = historico.location.pathname.split("/")[3];
         setarPaginacao(1)
-        if (action=='busca' && tabela=='nivel' && typeof search_!=undefined) {
-            setarBusca(search_)
-            if (typeof historico.location.pathname.split("/")[4]!='undefined') {
-                setarPaginacao(historico.location.pathname.split("/")[4])
+        if (action=='busca' && tabela=='nivel' && typeof busca_!=undefined) {
+            if (typeof historico.location.pathname.split("/")[4]=='undefined' || 
+                historico.location.pathname.split("/")[4]=='' ||
+                historico.location.pathname.split("/")[4]==0
+            ) {
+                historico.push(`/listar/niveis/1`)
             }
+            setarBusca(busca_)
+            setarPaginacao(historico.location.pathname.split("/")[4])
             fetch(`http://localhost:3002/api/buscar/niveis/${busca}/${paginacao}`)
                 .then(res => res.json())
                 .then(data => {
                     setLevelList(data);
+                }).catch(err => {
+                    toast.error("Erro ao buscar níveis")
                 })
         } else {
-            if (typeof historico.location.pathname.split("/")[3]!='undefined') {
-                setarPaginacao(historico.location.pathname.split("/")[3])
+            if (typeof historico.location.pathname.split("/")[3]=='undefined' || 
+                historico.location.pathname.split("/")[3]=='' ||
+                historico.location.pathname.split("/")[3]==0
+            ) {
+                historico.push(`/listar/niveis/1`)
             }
+            setarPaginacao(historico.location.pathname.split("/")[3])
             fetch(`http://localhost:3002/api/listar/niveis/${paginacao}`)
                 .then(response => response.json())
                 .then(data => {
                     setLevelList(data);
-                });
+                }).catch(err => {
+                    toast.error("Erro ao listar níveis")
+                })
         }
     },[historico.location.pathname])
     
@@ -65,15 +77,13 @@ function ListarNiveis() {
                 .then(response => response.json())
                 .then(data => {
                     setLevelList(data)
-                    toast.success('Nível excluído com sucesso');
+                    toast.success('Nível excluído com sucesso')
                 }).catch(error => {
                     toast.error('Não foi possível excluir o nível')
-                    toast.error(error)
                 });
             }
         }).catch(error => {
             toast.error('Não foi possível excluir o nível')
-            toast.error(error.error)
         })
     }
 
@@ -105,7 +115,7 @@ function ListarNiveis() {
     function fecharModal() {
         setarEsconderMostrar('hide');
     }
-    function showModal(id) {
+    function mostrarModal(id) {
         setarExcluirID(id);
         setarEsconderMostrar('show');
     }
@@ -144,6 +154,7 @@ function ListarNiveis() {
             <table className="table table-stripped">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Nível</th>
                         <th>Desenvolvedores com esse nível</th>
                         <th></th>
@@ -153,12 +164,13 @@ function ListarNiveis() {
                     {niveisList.map((val, key) => {
                         return (
                             <tr key={key}>
-                                <td>Nível: {val.nivel}</td>
+                                <td>{val.id}</td>
+                                <td>{val.nivel}</td>
                                 <td>{val.total_desenvolvedores}</td>
                                 <td>
                                     <div className="right">
                                         <a className="btn btn-xs btn-warning margin-right" onClick={() => historico.push('/editar/nivel/'+val.id)}>Editar</a>
-                                        <a className="btn btn-xs btn-danger" onClick={() => showModal(val.id)}>Excluir</a>
+                                        <a className="btn btn-xs btn-danger" onClick={() => mostrarModal(val.id)}>Excluir</a>
                                     </div>
                                 </td>
                             </tr>

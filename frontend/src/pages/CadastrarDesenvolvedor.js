@@ -17,7 +17,7 @@ function CadatrarDesenvolvedor() {
         progress: undefined,
     });
 
-    let history = useHistory();
+    let historico = useHistory();
 
     const [desenvolvedor, setarDesenvolvedor] = useState({
         nivel: '',
@@ -26,7 +26,7 @@ function CadatrarDesenvolvedor() {
         datanascimento: '',
         hobby: ''
     })
-    const [niveis, setNiveis] = useState([])
+    const [niveis, setarNiveis] = useState([])
 
     function manipularMudanca(event) {
         if (event.target.name == "sexo") {
@@ -37,7 +37,7 @@ function CadatrarDesenvolvedor() {
                     [event.target.name]: event.target.value
                 })
             } else {
-                toast.error("Sexo inválido!")
+                toast.error("Sexo inválido")
             }
 
         } else if (event.target.name == "datanascimento") {
@@ -52,8 +52,20 @@ function CadatrarDesenvolvedor() {
             if (data.length > 10) {
                 data = event.target.value = data.substring(0, 10)
             }
-            if (data.length == 10 && Number(data.substring(6, 10)) < 1950) {
-                event.target.value = data.substring(0, 6)+'/1950'
+            event.target.value=data
+            //se o dia for maior que 31, setar o dia para 31
+            if (data.substring(0, 2) > 31) {
+                data = event.target.value = '31/' + data.substring(3, 5) + '/' + data.substring(6, 10)
+            }
+            event.target.value=data
+            //se o mês for maior que 12, setar o mês para 12
+            if (data.substring(3, 5) > 12) {
+                data = event.target.value = data.substring(0, 2) + '/' + '12' + '/' + data.substring(6, 10)
+            }
+            event.target.value=data
+            //se o ano for menor que 1900, setar o ano para 1900
+            if (data.length == 10 && Number(data.substring(6, 10)) < 1900) {
+                event.target.value = data.substring(0, 6)+'1900'
             }
         }
         setarDesenvolvedor({
@@ -64,7 +76,6 @@ function CadatrarDesenvolvedor() {
 
     function manipularCadastro(event) {
         event.preventDefault()
-        console.log(desenvolvedor)
         if (desenvolvedor.nivel=='') {
             toast.error("Selecione o nível")
         } else if (desenvolvedor.nome=='') {
@@ -76,8 +87,9 @@ function CadatrarDesenvolvedor() {
         } else if (desenvolvedor.hobby=='') {
             toast.error("Digite a o hobby")
         } else {
-            //formata data para yyyy-mm-dd
-            desenvolvedor.datanascimento=
+            
+            //formata data para yyyy-mm-dd antes de enviar
+            let dataNascimento=
                 desenvolvedor.datanascimento.substring(6, 10)+'-'+
                 desenvolvedor.datanascimento.substring(3, 5)+'-'+
                 desenvolvedor.datanascimento.substring(0, 2)
@@ -86,36 +98,28 @@ function CadatrarDesenvolvedor() {
                 nivel:desenvolvedor.nivel, 
                 nome: desenvolvedor.nome, 
                 sexo: desenvolvedor.sexo, 
-                datanascimento: desenvolvedor.datanascimento, 
+                datanascimento: dataNascimento, 
                 hobby: desenvolvedor.hobby 
             }).then(response => {
-                toast.success("Cadastrado com sucesso!")
-                history.push("/")
+                toast.success("Cadastrado com sucesso")
+                historico.push("/")
             }).catch(error => {
-                toast.error("Erro ao cadastrar!")
+                toast.error("Erro ao cadastrar")
             })
         }
     }
 
     useEffect(() => {
         Axios.get('http://localhost:3002/api/listar/niveis/todos').then(response => {
-            setNiveis([{value:'Selecione um nível', label:'Selecione um nível'}]);
+            setarNiveis([{value:'Selecione um nível', label:'Selecione um nível'}]);
             response.data.forEach(nivel => {
-                setNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
+                setarNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
             })
         }).catch(error => {
             toast.error("Erro ao listar todos os níveis!")
         })
     }, [])
 
-    const abrirCalendario = (event) => {
-        event.preventDefault()
-        console.log('o que eu to fazendo?')
-       
-
-
-    }
- 
     return (
         <div className="container">
             <h2>Cadastrar desenvolvedor</h2>
@@ -146,11 +150,11 @@ function CadatrarDesenvolvedor() {
                 </div>
                 <div className="form-group">
                     <label>Data de nascimento:</label>
-                    <input className="form-control" type="date" name="datanascimento" value={desenvolvedor.datanascimento} onChange={manipularMudanca} onClick={abrirCalendario} />
+                    <input className="form-control" type="text" name="datanascimento" value={desenvolvedor.datanascimento} onChange={manipularMudanca} />
                 </div>
                 <div className="form-group">
                     <label>Hobby:</label>
-                    <textarea className="form-control" name="hobby" onChange={manipularMudanca}>{desenvolvedor.hobby}</textarea>
+                    <input className="form-control" type="text" name="hobby" value={desenvolvedor.hobby} onChange={manipularMudanca} />
                 </div>
                 <input className="btn btn-success right" type="submit" value="Cadastrar desenvolvedor" />
             </form>

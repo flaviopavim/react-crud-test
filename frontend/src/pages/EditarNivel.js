@@ -47,7 +47,7 @@ function EditarNivel() {
                 toast.success("Nível editado com sucesso!")
                 historico.push("/listar/niveis")
             }).catch(error => {
-                toast.error("Erro ao editar!")
+                toast.error("Erro ao editar")
             })
         }
     }
