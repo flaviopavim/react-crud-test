@@ -11,9 +11,11 @@ No repositório encontra-se duas pastas na raiz: backend e frontend
 
 ---------------------------------------------
 ---------------------------------------------
+
 Endpoints utilizados no projeto
 
 URL base: http://localhost/3002
+
 ---------------------------------------------
 Desenvolvedores:
 ---------------------------------------------
