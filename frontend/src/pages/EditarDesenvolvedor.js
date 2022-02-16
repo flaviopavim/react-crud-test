@@ -95,6 +95,24 @@ function EditarDesenvolvedor() {
                 data = event.target.value = '31/' + data.substring(3, 5) + '/' + data.substring(6, 10)
             }
             event.target.value=data
+            //se o dia for maior que 28, verifica se é bissexto
+            if (data.substring(0, 2) == 29) {
+                if (data.substring(3, 5) == '02') {
+                    if (data.substring(6, 10) % 4 == 0) {
+                        data = event.target.value = '29/02/' + data.substring(6, 10)
+                    } else {
+                        data = event.target.value = '28/02/' + data.substring(6, 10)
+                    }
+                }
+            }
+            event.target.value=data
+            //se o dia for maior que 31, verifica se o mês tem 31 dias
+            if (data.substring(0, 2) > 31) {
+                if (data.substring(3, 5) == '04' || data.substring(3, 5) == '06' || data.substring(3, 5) == '09' || data.substring(3, 5) == '11') {
+                    data = event.target.value = '31/' + data.substring(3, 5) + '/' + data.substring(6, 10)
+                }
+            }
+            event.target.value=data
             //se o mês for maior que 12, setar o mês para 12
             if (data.substring(3, 5) > 12) {
                 data = event.target.value = data.substring(0, 2) + '/' + '12' + '/' + data.substring(6, 10)

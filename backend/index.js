@@ -67,7 +67,7 @@ const niveis = [
 //desenvolvedores
 /////////////////////////////////
 
-//lista todos os desenvolvedores
+//lista desenvolvedores
 app.get("/api/listar/desenvolvedores/:paginacao", (req, res) => {
     //lista todos os desenvolvedores com seus níveis
     let paginacao=(req.params.paginacao-1)*6
@@ -94,7 +94,7 @@ app.get("/api/listar/desenvolvedores/:paginacao", (req, res) => {
     })
 });
 
-//busca por desenvolvedores
+//busca desenvolvedores
 app.get("/api/buscar/desenvolvedores/:busca/:paginacao", (req, res) => {
     let paginacao=(req.params.paginacao-1)*6
     db.query(`
@@ -129,7 +129,7 @@ app.get("/api/buscar/desenvolvedores/:busca/:paginacao", (req, res) => {
     })
 });
 
-//busca por um desenvolvedores
+//busca desenvolvedor
 app.get("/api/desenvolvedor/:id", (req, res) => {
     const id = req.params.id;
     db.query(`
@@ -154,7 +154,7 @@ app.get("/api/desenvolvedor/:id", (req, res) => {
     );
 });
 
-//criar desenvolvedores
+//criar desenvolvedor
 app.post('/api/cadastrar/desenvolvedor', (req, res) => {
     const nivel = req.body.nivel;
     const nome = req.body.nome;
@@ -209,9 +209,9 @@ app.delete('/api/excluir/desenvolvedor/:id', (req, res) => {
 //niveis
 /////////////////////////////////
 
-//lista todos os níveis
+//lista níveis
 app.get("/api/listar/niveis/:paginacao", (req, res) => {
-    //se não houver erro, lista todos os níveis
+    //se for o pedido pro select de níveis
     let limit=''
     if (req.params.paginacao!='todos') {
         let paginacao=(req.params.paginacao-1)*6
@@ -234,8 +234,8 @@ app.get("/api/listar/niveis/:paginacao", (req, res) => {
     })
 });
 
-//busca
-app.get("/api/buscar/nivel/:busca/:paginacao", (req, res) => {
+//busca níveis
+app.get("/api/buscar/niveis/:busca/:paginacao", (req, res) => {
     db.query(`
     SELECT 
         n.*,
@@ -257,7 +257,7 @@ app.get("/api/buscar/nivel/:busca/:paginacao", (req, res) => {
     })
 });
 
-//listar um nível
+//listar nível
 app.get("/api/nivel/:id", (req, res) => {
     const id = req.params.id;
     db.query("SELECT * FROM nivel WHERE id = ?", id, (err, result) => {
@@ -343,16 +343,6 @@ app.delete('/api/excluir/nivel/:id', (req, res) => {
 /////////////////////////////////////////////
 // inicia o servidor pra escutar a porta 3000
 /////////////////////////////////////////////
-
-/*
-id: integer
-nivel: fk
-nome: varchar
-sexo: char
-datanascimento: date
-idade: integer
-hobby: varchar
-*/
 
 app.listen(PORT, () => {
     //cria tabela de desenvolvedores se não existir
@@ -442,7 +432,6 @@ app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`)
 
 })
-
 
 //testes unitários
 /*
