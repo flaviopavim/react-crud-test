@@ -327,7 +327,7 @@ app.delete('/api/excluir/nivel/:id', (req, res) => {
                     console.log(result2)
                     //resultado personalizado
                     res.status(501).send({
-                        error: "Não é possível excluir esse nível, pois existem desenvolvedores vinculados à ele."
+                        error: "Não é possível excluir esse nível, pois existem desenvolvedores vinculados à ele"
                     })
                     //res.status(501).send(result)
                 }
