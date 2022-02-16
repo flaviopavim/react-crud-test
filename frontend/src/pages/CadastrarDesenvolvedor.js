@@ -3,6 +3,7 @@ import Axios from 'axios'
 import '../App.css'
 import { useHistory } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { formataData,formataDataBanco } from '../functions'
 import 'react-toastify/dist/ReactToastify.css';
 
 function CadatrarDesenvolvedor() {
@@ -42,31 +43,7 @@ function CadatrarDesenvolvedor() {
 
         } else if (event.target.name == "datanascimento") {
             //formata a data conforme digita
-            let data = event.target.value
-            if (data.length == 2) {
-                data = data + '/'
-            } else if (data.length == 5) {
-                data = data + '/'
-            }
-            event.target.value=data
-            if (data.length > 10) {
-                data = event.target.value = data.substring(0, 10)
-            }
-            event.target.value=data
-            //se o dia for maior que 31, setar o dia para 31
-            if (data.substring(0, 2) > 31) {
-                data = event.target.value = '31/' + data.substring(3, 5) + '/' + data.substring(6, 10)
-            }
-            event.target.value=data
-            //se o mês for maior que 12, setar o mês para 12
-            if (data.substring(3, 5) > 12) {
-                data = event.target.value = data.substring(0, 2) + '/' + '12' + '/' + data.substring(6, 10)
-            }
-            event.target.value=data
-            //se o ano for menor que 1900, setar o ano para 1900
-            if (data.length == 10 && Number(data.substring(6, 10)) < 1900) {
-                event.target.value = data.substring(0, 6)+'1900'
-            }
+            event.target.value=formataData(event.target.value)
         }
         setarDesenvolvedor({
             ...desenvolvedor,
@@ -89,10 +66,7 @@ function CadatrarDesenvolvedor() {
         } else {
             
             //formata data para yyyy-mm-dd antes de enviar
-            let dataNascimento=
-                desenvolvedor.datanascimento.substring(6, 10)+'-'+
-                desenvolvedor.datanascimento.substring(3, 5)+'-'+
-                desenvolvedor.datanascimento.substring(0, 2)
+            let dataNascimento=formataDataBanco(desenvolvedor.datanascimento)
 
             Axios.post('http://localhost:3002/api/cadastrar/desenvolvedor', { 
                 nivel:desenvolvedor.nivel, 

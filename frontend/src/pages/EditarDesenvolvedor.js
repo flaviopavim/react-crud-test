@@ -3,6 +3,7 @@ import Axios from 'axios'
 import '../App.css'
 import { useHistory } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { formataData, formataDataBanco } from '../functions'
 import 'react-toastify/dist/ReactToastify.css';
 
 function EditarDesenvolvedor() {
@@ -58,10 +59,10 @@ function EditarDesenvolvedor() {
                         }
                     })
                 }).catch(error => {
-                    toast.error("Erro ao listar os níveis!")
+                    toast.error("Erro ao listar os níveis")
                 })
             }).catch(error => {
-                toast.error("Erro ao listar os desenvolvedor!")
+                toast.error("Erro ao listar os desenvolvedor")
             })
 
     }, [historico.location.pathname])
@@ -79,49 +80,7 @@ function EditarDesenvolvedor() {
             }
         } else if (event.target.name == "datanascimento") {
             //formata a data conforme digita
-            let data = event.target.value
-            if (data.length == 2) {
-                data = data + '/'
-            } else if (data.length == 5) {
-                data = data + '/'
-            }
-            event.target.value=data
-            if (data.length > 10) {
-                data = event.target.value = data.substring(0, 10)
-            }
-            event.target.value=data
-            //se o dia for maior que 31, setar o dia para 31
-            if (data.substring(0, 2) > 31) {
-                data = event.target.value = '31/' + data.substring(3, 5) + '/' + data.substring(6, 10)
-            }
-            event.target.value=data
-            //se o dia for maior que 28, verifica se é bissexto
-            if (data.substring(0, 2) == 29) {
-                if (data.substring(3, 5) == '02') {
-                    if (data.substring(6, 10) % 4 == 0) {
-                        data = event.target.value = '29/02/' + data.substring(6, 10)
-                    } else {
-                        data = event.target.value = '28/02/' + data.substring(6, 10)
-                    }
-                }
-            }
-            event.target.value=data
-            //se o dia for maior que 31, verifica se o mês tem 31 dias
-            if (data.substring(0, 2) > 31) {
-                if (data.substring(3, 5) == '04' || data.substring(3, 5) == '06' || data.substring(3, 5) == '09' || data.substring(3, 5) == '11') {
-                    data = event.target.value = '31/' + data.substring(3, 5) + '/' + data.substring(6, 10)
-                }
-            }
-            event.target.value=data
-            //se o mês for maior que 12, setar o mês para 12
-            if (data.substring(3, 5) > 12) {
-                data = event.target.value = data.substring(0, 2) + '/' + '12' + '/' + data.substring(6, 10)
-            }
-            event.target.value=data
-            //se o ano for menor que 1900, setar o ano para 1900
-            if (data.length == 10 && Number(data.substring(6, 10)) < 1900) {
-                event.target.value = data.substring(0, 6)+'1900'
-            }
+            event.target.value=formataData(event.target.value)
         }
         if (event.target.name == "nivel") {
             //seta o nivel_id
@@ -142,18 +101,15 @@ function EditarDesenvolvedor() {
     function manipularCadastro(event) {
         event.preventDefault()
         if (desenvolvedor.nivel=='') {
-            toast.error("O nivel não pode ser vazio!")
+            toast.error("O nivel não pode ser vazio")
         } else if (desenvolvedor.nome=='') {
-            toast.error("O nome não pode ser vazio!")
+            toast.error("O nome não pode ser vazio")
         } else if (desenvolvedor.hobby=='') {
-            toast.error("A descrição não pode ser vazia!")
+            toast.error("A descrição não pode ser vazia")
         } else {
 
             //formata data para yyyy-mm-dd antes de enviar
-            let dataNascimento=
-                desenvolvedor.datanascimento.substring(6, 10)+'-'+
-                desenvolvedor.datanascimento.substring(3, 5)+'-'+
-                desenvolvedor.datanascimento.substring(0, 2)
+            let dataNascimento=formataDataBanco(desenvolvedor.datanascimento)
 
             const id = window.location.href.split('/')[5]
             Axios.patch(`http://localhost:3002/api/editar/desenvolvedor/${id}`, { 

@@ -40,11 +40,11 @@ function EditarNivel() {
         event.preventDefault()
         const id = window.location.href.split('/')[5]
         if (nivel=='') {
-            toast.error("O título não pode ser vazio!")
+            toast.error("O título não pode ser vazio")
         } else {
             Axios.patch('http://localhost:3002/api/editar/nivel/'+id,{ nivel: nivel })
             .then(response => {
-                toast.success("Nível editado com sucesso!")
+                toast.success("Nível editado com sucesso")
                 historico.push("/listar/niveis")
             }).catch(error => {
                 toast.error("Erro ao editar")
