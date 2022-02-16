@@ -63,6 +63,12 @@ const niveis = [
     'Super Sayajin 15', //1
 ]
 
+app.get("/", (req, res) => {
+    res.status(200).send({
+        "message": "Hello World! Essa é API de desenvolvedores"
+    })
+})
+
 /////////////////////////////////
 //desenvolvedores
 /////////////////////////////////
