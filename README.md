@@ -12,14 +12,13 @@ No repositório encontra-se duas pastas na raiz: backend e frontend
 ---------------------------------------------
 ---------------------------------------------
 
-Endpoints utilizados no projeto
+####Endpoints utilizados no projeto
 
-URL base: http://localhost/3002
-
----------------------------------------------
-Desenvolvedores:
+####URL base: http://localhost/3002
 
 ---------------------------------------------
+
+####Desenvolvedores:
 
 ```
 Endpoint: /api/listar/desenvolvedores/:paginacao
@@ -69,10 +68,7 @@ Método - DELETE
 Função: Editar desenvolvedor
 ```
 
----------------------------------------------
-Níveis:
-
----------------------------------------------
+####Níveis:
 
 ```
 Endpoint: /api/listar/niveis/:paginacao
