@@ -226,7 +226,7 @@ function ListarDesenvolvedores() {
             </form>
 
             <div className="row">
-                {resultados.length>0 ? resultados : <div className="col-md-12">Nenhum desenvolvedor encontrado</div>}
+                {resultados.length>0 ? resultados : <div className="col-md-12"><div className="alert alert-warning">Nenhum resultado encontrado</div></div>}
             </div>
 
             <div className="row">

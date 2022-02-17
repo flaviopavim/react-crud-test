@@ -169,19 +169,24 @@ function ListarNiveis() {
                     </div>
                 </div>
             </form>
-            <table className="table table-stripped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nível</th>
-                        <th>Desenvolvedores com esse nível</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {resultados.length>0 ? resultados : <div className="col-md-12">Nenhum nível encontrado</div>}
-                </tbody>
-            </table>
+            {
+                resultados.length>0 ?
+                    <table className="table table-stripped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nível</th>
+                                <th>Desenvolvedores com esse nível</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {resultados}
+                        </tbody>
+                    </table>
+                    :
+                    <div className="alert alert-warning">Nenhum resultado encontrado</div>
+            }
             
             <div className="row">
                 <div className="col-md-12">
