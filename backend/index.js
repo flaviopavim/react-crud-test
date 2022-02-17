@@ -88,7 +88,7 @@ app.get("/api/listar/desenvolvedores/:paginacao", (req, res) => {
         (SELECT COUNT(id) FROM desenvolvedores) AS total
     FROM 
         desenvolvedores d 
-            LEFT JOIN nivel n ON n.id=d.nivel 
+            LEFT JOIN niveis n ON n.id=d.nivel 
     ORDER BY d.id DESC
     LIMIT ${paginacao},6
     `, (err, result) => {
@@ -106,25 +106,32 @@ app.get("/api/buscar/desenvolvedores/:busca/:paginacao", (req, res) => {
     db.query(`
     SELECT 
         d.id,
-        d.name,
         n.nivel,
-        d.hobby,
+        d.nome,
+        d.sexo,
+        d.datanascimento,
+        d.hobby, 
         (SELECT 
             COUNT(d.id)
         FROM 
             desenvolvedores d
-                LEFT JOIN nivel n ON n.id=d.nivel
-        WHERE 
-            d.name LIKE '%${req.params.busca}%' OR
-            d.hobby LIKE '%${req.params.busca}%' OR
-            n.name LIKE '%${req.params.busca}%') AS total
+                LEFT JOIN niveis n ON n.id=d.nivel
+        WHERE
+            n.nivel LIKE '%${req.params.busca}%' OR
+            d.nome LIKE '%${req.params.busca}%' OR
+            d.sexo LIKE '%${req.params.busca}%' OR
+            d.datanascimento LIKE '%${req.params.busca}%' OR
+            d.hobby LIKE '%${req.params.busca}%'
+        ) AS total
     FROM 
         desenvolvedores d
-            LEFT JOIN nivel n ON n.id=d.nivel
+            LEFT JOIN niveis n ON n.id=d.nivel
     WHERE 
-        d.name LIKE '%${req.params.busca}%' OR
-        d.hobby LIKE '%${req.params.busca}%' OR
-        n.name LIKE '%${req.params.busca}%'
+        n.nivel LIKE '%${req.params.busca}%' OR
+        d.nome LIKE '%${req.params.busca}%' OR
+        d.sexo LIKE '%${req.params.busca}%' OR
+        d.datanascimento LIKE '%${req.params.busca}%' OR
+        d.hobby LIKE '%${req.params.busca}%'
     ORDER BY d.id DESC
     LIMIT ${paginacao},6
     `, (err, result) => {
@@ -148,7 +155,7 @@ app.get("/api/desenvolvedor/:id", (req, res) => {
         d.hobby 
     FROM 
         desenvolvedores d 
-            LEFT JOIN nivel n ON n.id=d.nivel 
+            LEFT JOIN niveis n ON n.id=d.nivel 
     WHERE d.id = ?
     `, id, (err, result) => {
         if (err) {
@@ -226,10 +233,10 @@ app.get("/api/listar/niveis/:paginacao", (req, res) => {
     db.query(`
     SELECT 
         n.*,
-        (SELECT COUNT(id) FROM nivel) AS total,
+        (SELECT COUNT(id) FROM niveis) AS total,
         (SELECT COUNT(id) FROM desenvolvedores WHERE nivel = n.id) AS total_desenvolvedores
     FROM 
-        nivel n
+        niveis n
     ORDER BY n.id DESC
     ${limit}
     `, (err, result) => {
@@ -245,13 +252,12 @@ app.get("/api/buscar/niveis/:busca/:paginacao", (req, res) => {
     db.query(`
     SELECT 
         n.*,
-        (SELECT COUNT(id) FROM nivel) AS total,
+        (SELECT COUNT(id) FROM niveis) AS total,
         (SELECT COUNT(id) FROM desenvolvedores WHERE nivel = n.id) AS total_desenvolvedores
     FROM 
-        nivel n
+        niveis n
     WHERE 
-        n.name LIKE '%`+req.params.busca+`%' OR 
-        n.hobby LIKE '%`+req.params.busca+`%' 
+        n.nivel LIKE '%${req.params.busca}%'
     ORDER BY n.id DESC
     LIMIT ${req.params.paginacao},6
     `, (err, result) => {
@@ -266,7 +272,7 @@ app.get("/api/buscar/niveis/:busca/:paginacao", (req, res) => {
 //listar nível
 app.get("/api/nivel/:id", (req, res) => {
     const id = req.params.id;
-    db.query("SELECT * FROM nivel WHERE id = ?", id, (err, result) => {
+    db.query("SELECT * FROM niveis WHERE id = ?", id, (err, result) => {
         if (err) {
             console.log(err)
             res.status(400).send(result)
@@ -278,7 +284,7 @@ app.get("/api/nivel/:id", (req, res) => {
 //criar nível
 app.post('/api/cadastrar/nivel', (req, res) => {
     const nivel = req.body.nivel;
-    db.query("INSERT INTO nivel (nivel) VALUES (?)", [nivel], (err, result) => {
+    db.query("INSERT INTO niveis (nivel) VALUES (?)", [nivel], (err, result) => {
         if (err) {
             console.log(err)
             res.status(400).send(result)
@@ -292,7 +298,7 @@ app.post('/api/cadastrar/nivel', (req, res) => {
 app.patch('/api/editar/nivel/:id', (req, res) => {
     const id = req.params.id;
     const nivel = req.body.nivel;
-    db.query("UPDATE nivel SET nivel = ? WHERE id = ?", [nivel, id], (err, result) => {
+    db.query("UPDATE niveis SET nivel = ? WHERE id = ?", [nivel, id], (err, result) => {
         if (err) {
             console.log(err)
             res.status(400).send(result)
@@ -305,7 +311,7 @@ app.patch('/api/editar/nivel/:id', (req, res) => {
 //excluir nível
 app.delete('/api/excluir/nivel/:id', (req, res) => {
     let id=req.params.id
-    db.query("SELECT * FROM nivel WHERE id = ?", id, (err, result) => {
+    db.query("SELECT * FROM niveis WHERE id = ?", id, (err, result) => {
         if (err) {
             console.log(err)
             res.status(400).send(result)
@@ -316,7 +322,7 @@ app.delete('/api/excluir/nivel/:id', (req, res) => {
                     console.log(err)
                 }
                 if(result2.length==0){
-                    db.query("DELETE FROM nivel WHERE id= ?", id, (err, result3) => {
+                    db.query("DELETE FROM niveis WHERE id= ?", id, (err, result3) => {
                         if (err) {
                             console.log(err)
                             res.status(400).send({
@@ -353,7 +359,7 @@ app.delete('/api/excluir/nivel/:id', (req, res) => {
 app.listen(PORT, () => {
     //cria tabela de desenvolvedores se não existir
     db.query(`
-    CREATE TABLE IF NOT EXISTS nivel (
+    CREATE TABLE IF NOT EXISTS niveis (
         id INT NOT NULL AUTO_INCREMENT,
         nivel VARCHAR(255) NOT NULL,
         PRIMARY KEY (id)
@@ -372,7 +378,7 @@ app.listen(PORT, () => {
             datanascimento DATE NOT NULL,
             hobby VARCHAR(255) NOT NULL,
             PRIMARY KEY (id),
-            FOREIGN KEY (nivel) REFERENCES nivel(id)
+            FOREIGN KEY (nivel) REFERENCES niveis(id)
         )
         `, (err, result) => {
             if (err) {
@@ -389,7 +395,7 @@ app.listen(PORT, () => {
                 d.hobby
             FROM 
                 desenvolvedores d 
-                    LEFT JOIN nivel n ON n.id=d.nivel 
+                    LEFT JOIN niveis n ON n.id=d.nivel 
             ORDER BY d.id DESC
             `, (err, result) => {
                 if (err) {
@@ -401,7 +407,7 @@ app.listen(PORT, () => {
                     //insere os níveis de demonstração
                     niveis.reverse()
                     niveis.forEach(nivel => {   
-                        db.query(`INSERT INTO nivel (nivel) VALUES ('${nivel}')`, (err, result) => {
+                        db.query(`INSERT INTO niveis (nivel) VALUES ('${nivel}')`, (err, result) => {
                             if (err) {
                                 console.log(err)
                             }

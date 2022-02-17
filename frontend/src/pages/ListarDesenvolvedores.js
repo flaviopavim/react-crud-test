@@ -29,63 +29,65 @@ function ListarDesenvolvedores() {
         let tabela = historico.location.pathname.split("/")[2];
         let busca_ = historico.location.pathname.split("/")[3];
         setarPaginacao(1)
-        if (acao=='buscar' && tabela=='dev' && typeof busca_!='undefined') {
+        if (acao=='buscar' && tabela=='desenvolvedores' && typeof busca_!='undefined') {
             setarBusca(busca_)
             if (typeof historico.location.pathname.split("/")[4]=='undefined' || 
                 historico.location.pathname.split("/")[4]=='' ||
                 historico.location.pathname.split("/")[4]==0
             ) {
                 historico.push(`/buscar/desenvolvedores/1`)
+            } else {
+                setarPaginacao(historico.location.pathname.split("/")[4])
+                fetch(`http://localhost:3002/api/buscar/desenvolvedores/${busca}/${paginacao}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        setarDesenvolvedorLista(data);
+                    }).catch(error => {
+                        toast.error('Erro ao buscar desenvolvedores')
+                    })
             }
-            setarPaginacao(historico.location.pathname.split("/")[4])
-            fetch(`http://localhost:3002/api/buscar/desenvolvedores/${busca}/${paginacao}`)
-                .then(res => res.json())
-                .then(data => {
-                    setarDesenvolvedorLista(data);
-                }).catch(error => {
-                    toast.error('Erro ao buscar desenvolvedores')
-                })
         } else {
             if (typeof historico.location.pathname.split("/")[3]=='undefined' || 
                 historico.location.pathname.split("/")[3]=='' ||
                 historico.location.pathname.split("/")[3]==0
             ) {
                 historico.push(`/listar/desenvolvedores/1`)
-            }
-            setarPaginacao(historico.location.pathname.split("/")[3])
-            fetch(`http://localhost:3002/api/listar/desenvolvedores/${paginacao}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(element => {
-                        if (element.datanascimento!='0000-00-00') {
-                            //formatar datanacimento em dd/mm/aaaa
-                            let dataNascimento = new Date(element.datanascimento);
-                            let dia = dataNascimento.getDate();
-                            let mes = dataNascimento.getMonth() + 1;
-                            let ano = dataNascimento.getFullYear();
-                            element.idade=0;
-                            if (typeof ano!='undefined') {
-                                //adicionar zero à esquerda no dia
-                                if (dia<10) {
-                                    dia = '0' + dia;
+            } else {
+                setarPaginacao(historico.location.pathname.split("/")[3])
+                fetch(`http://localhost:3002/api/listar/desenvolvedores/${paginacao}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(element => {
+                            if (element.datanascimento!='0000-00-00') {
+                                //formatar datanacimento em dd/mm/aaaa
+                                let dataNascimento = new Date(element.datanascimento);
+                                let dia = dataNascimento.getDate();
+                                let mes = dataNascimento.getMonth() + 1;
+                                let ano = dataNascimento.getFullYear();
+                                element.idade=0;
+                                if (typeof ano!='undefined') {
+                                    //adicionar zero à esquerda no dia
+                                    if (dia<10) {
+                                        dia = '0' + dia;
+                                    }
+                                    //adicionar zero à esquerda no mês
+                                    if (mes<10) {
+                                        mes = '0' + mes;
+                                    }
+                                    element.datanascimento = dia + '/' + mes + '/' + ano;
+                                    //calcular idade
+                                    element.idade = new Date().getFullYear() - ano;
                                 }
-                                //adicionar zero à esquerda no mês
-                                if (mes<10) {
-                                    mes = '0' + mes;
-                                }
-                                element.datanascimento = dia + '/' + mes + '/' + ano;
-                                //calcular idade
-                                element.idade = new Date().getFullYear() - ano;
+                            } else {
+                                element.datanascimento = 'Desconhecido';
+                                element.idade = 0;
                             }
-                        } else {
-                            element.datanascimento = 'Desconhecido';
-                            element.idade = 0;
-                        }
+                        });
+                        setarDesenvolvedorLista(data);
+                    }).catch(error => {
+                        toast.error("Erro ao listar desenvolvedores")
                     });
-                    setarDesenvolvedorLista(data);
-                }).catch(error => {
-                    toast.error("Erro ao listar desenvolvedores")
-                });
+            }
         }
     },[historico.location.pathname]);
 
@@ -124,11 +126,9 @@ function ListarDesenvolvedores() {
         } else {
             historico.push(`/buscar/desenvolvedores/${busca}`)
         }
-        
     }
-
     
-    function changePage(paginacao){
+    function mudarPaginacao(paginacao){
         setarPaginacao(paginacao)
         if (busca!='') {
             historico.push(`/buscar/desenvolvedores/${busca}/${paginacao}`)
@@ -157,7 +157,41 @@ function ListarDesenvolvedores() {
         setarEsconderMostrar('show');
     }
 
-    
+    let resultados=desenvolvedoresLista.map((developer, key) => {
+                    
+        //completa a string idade
+        let str_idade=''
+        if (typeof developer.idade!='undefined') {
+            if (developer.idade>0) {
+                str_idade=' ('+developer.idade+' anos)'
+            }
+        }
+
+        let str_sexo=''
+        if (developer.sexo=='m') {
+            str_sexo='Masculino'
+        } else if (developer.sexo=='f') {
+            str_sexo='Feminino'
+        } else {
+            str_sexo='Desconhecido'
+        }
+
+        return (
+            <div key={key} className="col-md-4">
+                <div className="box">
+                    <i className="glyphicon glyphicon-remove" onClick={() => showModal(developer.id)}></i>
+                    <i className="glyphicon glyphicon-pencil" onClick={() => manipularEdicao(developer.id)}></i>
+                    <div><strong>Nível:</strong> {developer.nivel}</div>
+                    <div><strong>Nome:</strong> {developer.nome}</div>
+                    <div><strong>Sexo:</strong> {str_sexo}</div>
+                    <div><strong>Data de nascimento:</strong> {developer.datanascimento}{str_idade}</div>
+                    <div><strong>Hobby:</strong> {developer.hobby}</div>
+                </div>
+                <div className="space"></div>
+            </div>
+        )
+    }
+    )
 
     return (
         <div className="container">
@@ -192,41 +226,7 @@ function ListarDesenvolvedores() {
             </form>
 
             <div className="row">
-                {desenvolvedoresLista.map((developer, key) => {
-                    
-                    //completa a string idade
-                    let str_idade=''
-                    if (typeof developer.idade!='undefined') {
-                        if (developer.idade>0) {
-                            str_idade=' ('+developer.idade+' anos)'
-                        }
-                    }
-
-                    let str_sexo=''
-                    if (developer.sexo=='m') {
-                        str_sexo='Masculino'
-                    } else if (developer.sexo=='f') {
-                        str_sexo='Feminino'
-                    } else {
-                        str_sexo='Desconhecido'
-                    }
-
-                    return (
-                        <div key={key} className="col-md-4">
-                            <div className="box">
-                                <i className="glyphicon glyphicon-remove" onClick={() => showModal(developer.id)}></i>
-                                <i className="glyphicon glyphicon-pencil" onClick={() => manipularEdicao(developer.id)}></i>
-                                <div><strong>Nível:</strong> {developer.nivel}</div>
-                                <div><strong>Nome:</strong> {developer.nome}</div>
-                                <div><strong>Sexo:</strong> {str_sexo}</div>
-                                <div><strong>Data de nascimento:</strong> {developer.datanascimento}{str_idade}</div>
-                                <div><strong>Hobby:</strong> {developer.hobby}</div>
-                            </div>
-                            <div className="space"></div>
-                        </div>
-                    )
-                }
-                )}
+                {resultados.length>0 ? resultados : <div className="col-md-12">Nenhum desenvolvedor encontrado</div>}
             </div>
 
             <div className="row">
@@ -236,7 +236,7 @@ function ListarDesenvolvedores() {
                             {
                                 paginas.map((val, key) => {
                                     return (
-                                        <li key={key} className={paginacao==val ? 'active' : ''}><a onClick={()=>changePage(val)} value={val}>{val}</a></li>
+                                        <li key={key} className={paginacao==val ? 'active' : ''}><a onClick={()=>mudarPaginacao(val)} value={val}>{val}</a></li>
                                     )
                                 })
                             }

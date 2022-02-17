@@ -29,37 +29,39 @@ function ListarNiveis() {
         let tabela = historico.location.pathname.split("/")[2];
         let busca_ = historico.location.pathname.split("/")[3];
         setarPaginacao(1)
-        if (action=='busca' && tabela=='nivel' && typeof busca_!=undefined) {
+        if (action=='buscar' && tabela=='niveis' && typeof busca_!='undefined') {
+            setarBusca(busca_)
             if (typeof historico.location.pathname.split("/")[4]=='undefined' || 
                 historico.location.pathname.split("/")[4]=='' ||
                 historico.location.pathname.split("/")[4]==0
             ) {
                 historico.push(`/listar/niveis/1`)
+            } else {
+                setarPaginacao(historico.location.pathname.split("/")[4])
+                fetch(`http://localhost:3002/api/buscar/niveis/${busca}/${paginacao}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        setLevelList(data);
+                    }).catch(err => {
+                        toast.error("Erro ao buscar níveis")
+                    })
             }
-            setarBusca(busca_)
-            setarPaginacao(historico.location.pathname.split("/")[4])
-            fetch(`http://localhost:3002/api/buscar/niveis/${busca}/${paginacao}`)
-                .then(res => res.json())
-                .then(data => {
-                    setLevelList(data);
-                }).catch(err => {
-                    toast.error("Erro ao buscar níveis")
-                })
         } else {
             if (typeof historico.location.pathname.split("/")[3]=='undefined' || 
                 historico.location.pathname.split("/")[3]=='' ||
                 historico.location.pathname.split("/")[3]==0
             ) {
                 historico.push(`/listar/niveis/1`)
+            } else {
+                setarPaginacao(historico.location.pathname.split("/")[3])
+                fetch(`http://localhost:3002/api/listar/niveis/${paginacao}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        setLevelList(data);
+                    }).catch(err => {
+                        toast.error("Erro ao listar níveis")
+                    })
             }
-            setarPaginacao(historico.location.pathname.split("/")[3])
-            fetch(`http://localhost:3002/api/listar/niveis/${paginacao}`)
-                .then(response => response.json())
-                .then(data => {
-                    setLevelList(data);
-                }).catch(err => {
-                    toast.error("Erro ao listar níveis")
-                })
         }
     },[historico.location.pathname])
     
@@ -87,17 +89,17 @@ function ListarNiveis() {
         })
     }
 
-    function handleChange(event) {
+    function manipularMudanca(event) {
         event.preventDefault()
         setarBusca(event.target.value)
     }
 
-    function handleSearch(event) {
+    function manipularBusca(event) {
         event.preventDefault()
         historico.push(`/buscar/niveis/${busca}/${paginacao}`)
     }
 
-    function changePage(paginacao){
+    function mudarPaginacao(paginacao){
         setarPaginacao(paginacao)
         historico.push(`/listar/niveis/${paginacao}`);
     }
@@ -119,6 +121,22 @@ function ListarNiveis() {
         setarExcluirID(id);
         setarEsconderMostrar('show');
     }
+
+    let resultados=niveisList.map((val, key) => {
+        return (
+            <tr key={key}>
+                <td>{val.id}</td>
+                <td>{val.nivel}</td>
+                <td>{val.total_desenvolvedores}</td>
+                <td>
+                    <div className="right">
+                        <a className="btn btn-xs btn-warning margin-right" onClick={() => historico.push('/editar/nivel/'+val.id)}>Editar</a>
+                        <a className="btn btn-xs btn-danger" onClick={() => mostrarModal(val.id)}>Excluir</a>
+                    </div>
+                </td>
+            </tr>
+        )}
+    )
 
     return (
         <div className="container">
@@ -142,12 +160,12 @@ function ListarNiveis() {
                     <div className="col-md-9">
                         <div className="form-group">
                             <label>Pesquisar:</label>
-                            <input className="form-control" type="text" name="busca" value={busca} onChange={handleChange} placeholder="Digite o nível ou a descrição do nivel" />
+                            <input className="form-control" type="text" name="busca" value={busca} onChange={manipularMudanca} placeholder="Digite o nível ou a descrição do nivel" />
                         </div>
                     </div>
                     <div className="col-md-3">
                         <div className="spaceLabel"></div>
-                        <button onClick={handleSearch} type="submit" className="btn btn-block btn-default">Pesquisar</button>
+                        <button onClick={manipularBusca} type="submit" className="btn btn-block btn-default">Pesquisar</button>
                     </div>
                 </div>
             </form>
@@ -161,21 +179,7 @@ function ListarNiveis() {
                     </tr>
                 </thead>
                 <tbody>
-                    {niveisList.map((val, key) => {
-                        return (
-                            <tr key={key}>
-                                <td>{val.id}</td>
-                                <td>{val.nivel}</td>
-                                <td>{val.total_desenvolvedores}</td>
-                                <td>
-                                    <div className="right">
-                                        <a className="btn btn-xs btn-warning margin-right" onClick={() => historico.push('/editar/nivel/'+val.id)}>Editar</a>
-                                        <a className="btn btn-xs btn-danger" onClick={() => mostrarModal(val.id)}>Excluir</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
-                    )}
+                    {resultados.length>0 ? resultados : <div className="col-md-12">Nenhum nível encontrado</div>}
                 </tbody>
             </table>
             
@@ -186,7 +190,7 @@ function ListarNiveis() {
                             {
                                 paginas.map((val, key) => {
                                     return (
-                                        <li key={key} className={paginacao==val ? 'active' : ''}><a onClick={()=>changePage(val)} value={val}>{val}</a></li>
+                                        <li key={key} className={paginacao==val ? 'active' : ''}><a onClick={()=>mudarPaginacao(val)} value={val}>{val}</a></li>
                                     )
                                 })
                             }
