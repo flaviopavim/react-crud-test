@@ -121,10 +121,14 @@ function ListarDesenvolvedores() {
 
     function manipularBusca(event) {
         event.preventDefault()
-        if (paginacao!='') {
-            historico.push(`/buscar/desenvolvedores/${busca}/${paginacao}`)
+        if (busca!='') {
+            if (paginacao!='') {
+                historico.push(`/buscar/desenvolvedores/${busca}/${paginacao}`)
+            } else {
+                historico.push(`/buscar/desenvolvedores/${busca}`)
+            }
         } else {
-            historico.push(`/buscar/desenvolvedores/${busca}`)
+            toast.error('Digite algo para buscar')
         }
     }
     
@@ -226,7 +230,7 @@ function ListarDesenvolvedores() {
             </form>
 
             <div className="row">
-                {resultados.length>0 ? resultados : <div className="col-md-12"><div className="alert alert-warning">Nenhum resultado encontrado</div></div>}
+                { resultados.length>0 ? resultados : <div className="col-md-12"><div className="alert alert-warning">Nenhum resultado encontrado</div></div> }
             </div>
 
             <div className="row">

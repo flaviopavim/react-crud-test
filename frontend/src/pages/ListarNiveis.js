@@ -96,7 +96,15 @@ function ListarNiveis() {
 
     function manipularBusca(event) {
         event.preventDefault()
-        historico.push(`/buscar/niveis/${busca}/${paginacao}`)
+        if (busca!='') {
+            if (paginacao!='') {
+                historico.push(`/buscar/niveis/${busca}/${paginacao}`)
+            } else {
+                historico.push(`/buscar/niveis/${busca}`)
+            }
+        } else {
+            toast.error('Digite algo para buscar')
+        }
     }
 
     function mudarPaginacao(paginacao){
