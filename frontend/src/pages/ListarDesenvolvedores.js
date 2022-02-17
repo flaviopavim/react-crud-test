@@ -35,10 +35,10 @@ function ListarDesenvolvedores() {
                 historico.location.pathname.split("/")[4]=='' ||
                 historico.location.pathname.split("/")[4]==0
             ) {
-                historico.push(`/buscar/desenvolvedores/1`)
+                historico.push(`/buscar/desenvolvedores/${busca_}/1`)
             } else {
                 setarPaginacao(historico.location.pathname.split("/")[4])
-                fetch(`http://localhost:3002/api/buscar/desenvolvedores/${busca}/${paginacao}`)
+                fetch(`http://localhost:3002/api/buscar/desenvolvedores/${busca_}/${paginacao}`)
                     .then(res => res.json())
                     .then(data => {
                         setarDesenvolvedorLista(data);

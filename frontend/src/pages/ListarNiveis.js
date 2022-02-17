@@ -35,10 +35,10 @@ function ListarNiveis() {
                 historico.location.pathname.split("/")[4]=='' ||
                 historico.location.pathname.split("/")[4]==0
             ) {
-                historico.push(`/listar/niveis/1`)
+                historico.push(`/buscar/niveis/${busca_}/1`)
             } else {
                 setarPaginacao(historico.location.pathname.split("/")[4])
-                fetch(`http://localhost:3002/api/buscar/niveis/${busca}/${paginacao}`)
+                fetch(`http://localhost:3002/api/buscar/niveis/${busca_}/${paginacao}`)
                     .then(res => res.json())
                     .then(data => {
                         setLevelList(data);
