@@ -29,16 +29,16 @@ function ListarDesenvolvedores() {
         let tabela = historico.location.pathname.split("/")[2];
         let busca_ = historico.location.pathname.split("/")[3];
         setarPaginacao(1)
-        if (acao=='buscar' && tabela=='desenvolvedores' && typeof busca_!='undefined') {
+        if (acao==='buscar' && tabela==='desenvolvedores' && typeof busca_!=='undefined') {
             setarBusca(busca_)
-            if (typeof historico.location.pathname.split("/")[4]=='undefined' || 
-                historico.location.pathname.split("/")[4]=='' ||
-                historico.location.pathname.split("/")[4]==0
+            if (typeof historico.location.pathname.split("/")[4]==='undefined' || 
+                historico.location.pathname.split("/")[4]==='' ||
+                historico.location.pathname.split("/")[4]===0
             ) {
                 historico.push(`/buscar/desenvolvedores/${busca_}/1`)
             } else {
                 setarPaginacao(historico.location.pathname.split("/")[4])
-                fetch(`http://localhost:3002/api/buscar/desenvolvedores/${busca_}/${paginacao}`)
+                fetch(`http://localhost:3002/buscar/desenvolvedores/${busca_}/${paginacao}`)
                     .then(res => res.json())
                     .then(data => {
                         setarDesenvolvedorLista(data);
@@ -47,25 +47,36 @@ function ListarDesenvolvedores() {
                     })
             }
         } else {
-            if (typeof historico.location.pathname.split("/")[3]=='undefined' || 
-                historico.location.pathname.split("/")[3]=='' ||
-                historico.location.pathname.split("/")[3]==0
+            if (typeof historico.location.pathname.split("/")[3]==='undefined' || 
+                historico.location.pathname.split("/")[3]==='' ||
+                historico.location.pathname.split("/")[3]===0
             ) {
                 historico.push(`/listar/desenvolvedores/1`)
             } else {
                 setarPaginacao(historico.location.pathname.split("/")[3])
-                fetch(`http://localhost:3002/api/listar/desenvolvedores/${paginacao}`)
+                fetch(`http://localhost:3002/listar/desenvolvedores/${paginacao}`)
                     .then(response => response.json())
                     .then(data => {
+                        console.log('-----------------------')
+                        console.log('-----------------------')
+                        console.log('-----------------------')
+                        console.log('-----------------------')
+                        console.log('-----------------------')
+                        console.log(data)
+                        console.log('-----------------------')
+                        console.log('-----------------------')
+                        console.log('-----------------------')
+                        console.log('-----------------------')
+                        console.log('-----------------------')
                         data.forEach(element => {
-                            if (element.datanascimento!='0000-00-00') {
+                            if (element.datanascimento!=='0000-00-00') {
                                 //formatar datanacimento em dd/mm/aaaa
                                 let dataNascimento = new Date(element.datanascimento);
                                 let dia = dataNascimento.getDate();
                                 let mes = dataNascimento.getMonth() + 1;
                                 let ano = dataNascimento.getFullYear();
                                 element.idade=0;
-                                if (typeof ano!='undefined') {
+                                if (typeof ano!=='undefined') {
                                     //adicionar zero à esquerda no dia
                                     if (dia<10) {
                                         dia = '0' + dia;
@@ -83,6 +94,7 @@ function ListarDesenvolvedores() {
                                 element.idade = 0;
                             }
                         });
+                        
                         setarDesenvolvedorLista(data);
                     }).catch(error => {
                         toast.error("Erro ao listar desenvolvedores")
@@ -93,11 +105,11 @@ function ListarDesenvolvedores() {
 
     function manipularExclusao() {
         setarEsconderMostrar('hide');
-        fetch(`http://localhost:3002/api/excluir/desenvolvedor/${excluir_id}`, {
+        fetch(`http://localhost:3002/excluir/desenvolvedor/${excluir_id}`, {
             method: 'DELETE'
         }).then(res => {
             toast.success("Desenvolvedor excluído com sucesso!");
-            fetch(`http://localhost:3002/api/listar/desenvolvedores/${paginacao}`)
+            fetch(`http://localhost:3002/listar/desenvolvedores/${paginacao}`)
             .then(response => response.json())
             .then(data => {
                 setarDesenvolvedorLista(data)
@@ -121,8 +133,8 @@ function ListarDesenvolvedores() {
 
     function manipularBusca(event) {
         event.preventDefault()
-        if (busca!='') {
-            if (paginacao!='') {
+        if (busca!=='') {
+            if (paginacao!=='') {
                 historico.push(`/buscar/desenvolvedores/${busca}/${paginacao}`)
             } else {
                 historico.push(`/buscar/desenvolvedores/${busca}`)
@@ -134,7 +146,7 @@ function ListarDesenvolvedores() {
     
     function mudarPaginacao(paginacao){
         setarPaginacao(paginacao)
-        if (busca!='') {
+        if (busca!=='') {
             historico.push(`/buscar/desenvolvedores/${busca}/${paginacao}`)
         } else {
             historico.push('/listar/desenvolvedores/'+paginacao);
@@ -172,9 +184,9 @@ function ListarDesenvolvedores() {
         }
 
         let str_sexo=''
-        if (developer.sexo=='m') {
+        if (developer.sexo==='m') {
             str_sexo='Masculino'
-        } else if (developer.sexo=='f') {
+        } else if (developer.sexo==='f') {
             str_sexo='Feminino'
         } else {
             str_sexo='Desconhecido'
@@ -240,7 +252,7 @@ function ListarDesenvolvedores() {
                             {
                                 paginas.map((val, key) => {
                                     return (
-                                        <li key={key} className={paginacao==val ? 'active' : ''}><a onClick={()=>mudarPaginacao(val)} value={val}>{val}</a></li>
+                                        <li key={key} className={paginacao===val ? 'active' : ''}><a onClick={()=>mudarPaginacao(val)} value={val}>{val}</a></li>
                                     )
                                 })
                             }

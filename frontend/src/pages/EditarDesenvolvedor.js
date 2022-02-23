@@ -35,7 +35,7 @@ function EditarDesenvolvedor() {
         const id = window.location.href.split('/')[5]
         
         //busca dados do desenvolvedor selecionado
-        Axios.get('http://localhost:3002/api/desenvolvedor/' + id)
+        Axios.get('http://localhost:3002/desenvolvedor/' + id)
             .then(response => {
               
                 //formata data de nascimento para dd/mm/yyyy
@@ -47,7 +47,7 @@ function EditarDesenvolvedor() {
                 setarDesenvolvedor(response.data[0])
 
                 //busca todos os niveis para o select
-                Axios.get('http://localhost:3002/api/listar/niveis/todos').then(response2 => {
+                Axios.get('http://localhost:3002/listar/niveis/todos').then(response2 => {
                     setarNiveis([]);
                     response2.data.forEach(nivel => {
                         setarNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
@@ -112,7 +112,7 @@ function EditarDesenvolvedor() {
             let dataNascimento=formataDataBanco(desenvolvedor.datanascimento)
 
             const id = window.location.href.split('/')[5]
-            Axios.patch(`http://localhost:3002/api/editar/desenvolvedor/${id}`, { 
+            Axios.patch(`http://localhost:3002/editar/desenvolvedor/${id}`, { 
                     nivel: desenvolvedor.nivel_id, 
                     nome: desenvolvedor.nome, 
                     sexo: desenvolvedor.sexo, 

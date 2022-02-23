@@ -23,7 +23,7 @@ function EditarNivel() {
 
     useEffect(() => {
         const id = window.location.href.split('/')[5]
-        Axios.get('http://localhost:3002/api/nivel/' + id)
+        Axios.get('http://localhost:3002/nivel/' + id)
             .then(response => {
                 setarNivel(response.data[0].nivel)
             })
@@ -42,7 +42,7 @@ function EditarNivel() {
         if (nivel=='') {
             toast.error("O título não pode ser vazio")
         } else {
-            Axios.patch('http://localhost:3002/api/editar/nivel/'+id,{ nivel: nivel })
+            Axios.patch('http://localhost:3002/editar/nivel/'+id,{ nivel: nivel })
             .then(response => {
                 toast.success("Nível editado com sucesso")
                 historico.push("/listar/niveis")

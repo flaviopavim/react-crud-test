@@ -27,7 +27,7 @@ function CadatrarNivel() {
 
     function manipularCadastro(event) {
         event.preventDefault()
-        Axios.post('http://localhost:3002/api/cadastrar/nivel', { nivel: nivel }).then(response => {
+        Axios.post('http://localhost:3002/cadastrar/nivel', { nivel: nivel }).then(response => {
             toast.success("Cadastrado com sucesso");
             historico.push("/listar/niveis")
         }).catch(error => {

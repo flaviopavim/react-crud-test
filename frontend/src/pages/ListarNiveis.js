@@ -29,16 +29,16 @@ function ListarNiveis() {
         let tabela = historico.location.pathname.split("/")[2];
         let busca_ = historico.location.pathname.split("/")[3];
         setarPaginacao(1)
-        if (action=='buscar' && tabela=='niveis' && typeof busca_!='undefined') {
+        if (action==='buscar' && tabela==='niveis' && typeof busca_!=='undefined') {
             setarBusca(busca_)
-            if (typeof historico.location.pathname.split("/")[4]=='undefined' || 
-                historico.location.pathname.split("/")[4]=='' ||
-                historico.location.pathname.split("/")[4]==0
+            if (typeof historico.location.pathname.split("/")[4]==='undefined' || 
+                historico.location.pathname.split("/")[4]==='' ||
+                historico.location.pathname.split("/")[4]===0
             ) {
                 historico.push(`/buscar/niveis/${busca_}/1`)
             } else {
                 setarPaginacao(historico.location.pathname.split("/")[4])
-                fetch(`http://localhost:3002/api/buscar/niveis/${busca_}/${paginacao}`)
+                fetch(`http://localhost:3002/buscar/niveis/${busca_}/${paginacao}`)
                     .then(res => res.json())
                     .then(data => {
                         setLevelList(data);
@@ -47,14 +47,14 @@ function ListarNiveis() {
                     })
             }
         } else {
-            if (typeof historico.location.pathname.split("/")[3]=='undefined' || 
-                historico.location.pathname.split("/")[3]=='' ||
-                historico.location.pathname.split("/")[3]==0
+            if (typeof historico.location.pathname.split("/")[3]==='undefined' || 
+                historico.location.pathname.split("/")[3]==='' ||
+                historico.location.pathname.split("/")[3]===0
             ) {
                 historico.push(`/listar/niveis/1`)
             } else {
                 setarPaginacao(historico.location.pathname.split("/")[3])
-                fetch(`http://localhost:3002/api/listar/niveis/${paginacao}`)
+                fetch(`http://localhost:3002/listar/niveis/${paginacao}`)
                     .then(response => response.json())
                     .then(data => {
                         setLevelList(data);
@@ -67,7 +67,7 @@ function ListarNiveis() {
     
     function manipularExclusao() {
         setarEsconderMostrar('hide');
-        fetch(`http://localhost:3002/api/excluir/nivel/${excluir_id}`, {
+        fetch(`http://localhost:3002/excluir/nivel/${excluir_id}`, {
             method: 'DELETE'
         }).then(res => {
             if (res.status == 501) {
@@ -75,7 +75,7 @@ function ListarNiveis() {
                     toast.error(data.error);
                 });
             } else {
-                fetch(`http://localhost:3002/api/listar/niveis/${paginacao}`)
+                fetch(`http://localhost:3002/listar/niveis/${paginacao}`)
                 .then(response => response.json())
                 .then(data => {
                     setLevelList(data)

@@ -68,7 +68,7 @@ function CadatrarDesenvolvedor() {
             //formata data para yyyy-mm-dd antes de enviar
             let dataNascimento=formataDataBanco(desenvolvedor.datanascimento)
 
-            Axios.post('http://localhost:3002/api/cadastrar/desenvolvedor', { 
+            Axios.post('http://localhost:3002/cadastrar/desenvolvedor', { 
                 nivel:desenvolvedor.nivel, 
                 nome: desenvolvedor.nome, 
                 sexo: desenvolvedor.sexo, 
@@ -84,7 +84,7 @@ function CadatrarDesenvolvedor() {
     }
 
     useEffect(() => {
-        Axios.get('http://localhost:3002/api/listar/niveis/todos').then(response => {
+        Axios.get('http://localhost:3002/listar/niveis/todos').then(response => {
             setarNiveis([{value:'Selecione um nível', label:'Selecione um nível'}]);
             response.data.forEach(nivel => {
                 setarNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
