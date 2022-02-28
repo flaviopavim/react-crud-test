@@ -1,4 +1,4 @@
-# React CRUD MySQL test
+# React CRUD test
 
 Teste feito com carinho pra amostra de habilidades de CRUD em React com MySQL
 
@@ -11,9 +11,16 @@ No repositório encontra-se duas pastas na raiz: backend e frontend
 
 ---------------------------------------------
 
+
+#### URL do frontend: http://localhost:3000
+#### URL do backend: http://localhost:3002
+
+
+---------------------------------------------
+
+
 #### Endpoints utilizados no projeto
 
-#### URL base: http://localhost:3002
 
 ---------------------------------------------
 
