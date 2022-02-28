@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post,HttpStatus, Res } from '@nestjs/common';
+import { getConnection } from 'typeorm';
 import { AppService } from './app.service';
 import { Desenvolvedores } from './desevolvedores.entity';
 import { Niveis } from './niveis.entity';
@@ -80,8 +81,20 @@ export class AppController {
   }
 
   @Delete('/excluir/nivel/:id')
-  excluirNivel(@Param('id') id: number): any {
-    return this.appService.excluirNivel(id)
+  async excluirNivel(@Res() response, @Param('id') id: number): Promise<any> {
+    const defaultConnection = getConnection()
+    const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).findOne({
+      where: {
+        nivel_id: id
+      }
+    });
+    
+    if (desenvolvedores) {
+      return response.status(501).send({error:'Não foi possível excluir o nível. Existem desenvolvedores associados ao nível.'})
+    } else {
+      this.appService.excluirNivel(id)
+      return response.status(200).send({error:'Excluído com sucesso'})
+    }
   }
 
 }

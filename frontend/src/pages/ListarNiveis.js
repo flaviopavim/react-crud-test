@@ -73,6 +73,7 @@ function ListarNiveis() {
         fetch(`http://localhost:3002/excluir/nivel/${excluir_id}`, {
             method: 'DELETE'
         }).then(res => {
+            console.log(res)
             if (res.status == 501) {
                 res.json().then(data => {
                     toast.error(data.error);

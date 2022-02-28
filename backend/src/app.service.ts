@@ -197,35 +197,17 @@ export class AppService {
   //api/deletar/nivel/:id
   async excluirNivel(@Param('id') id: number): Promise<any> {
       const defaultConnection = getConnection()
-
-      //verificar se algum desenvolvedor está associado ao nível
-      const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).findOne({
-        where: {
-          nivel_id: id
-        }
-      });
-
-      //se existir desenvolvedor associado ao nível, não pode excluir
-      if (desenvolvedores) {
-        return {
-          message: 'Nível não pode ser excluído, pois existem desenvolvedores associados ao mesmo'
-        }
+      const nivelExcluido = await defaultConnection.getRepository(Niveis).delete(id);
+      if (nivelExcluido.affected === 1) {
+          return {
+            status: 201,
+            message: 'Nível excluído com sucesso'
+          }
       } else {
-        const nivelExcluido = await defaultConnection.getRepository(Niveis).delete(id);
-        if (nivelExcluido.affected === 1) {
-            return {
-              message: 'Nível excluído com sucesso'
-            }
-        } else {
-            return {
-              message: 'Nível não encontrado'
-            }
-        }
+          return {
+            status: 404,
+            message: 'Nível não encontrado'
+          }
       }
-      
   }
-
-  
-
-
 }

@@ -25,10 +25,10 @@ function EditarNivel() {
         const id = window.location.href.split('/')[5]
         Axios.get('http://localhost:3002/nivel/' + id)
             .then(response => {
-                setarNivel(response.data[0].nivel)
+                setarNivel(response.data.nivel)
             })
             .catch(error => {
-                toast.error("Erro ao listar os níveis!")
+                toast.error("Erro ao listar nível!")
             })
     }, [])
 
