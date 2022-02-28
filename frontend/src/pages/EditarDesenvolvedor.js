@@ -47,15 +47,17 @@ function EditarDesenvolvedor() {
                 setarDesenvolvedor(response.data)
 
                 //busca todos os niveis para o select
-                Axios.get('http://localhost:3002/listar/niveis/todos').then(response2 => {
+                Axios.get('http://localhost:3002/listar/niveis').then(response2 => {
                     setarNiveis([]);
                     response2.data.forEach(nivel => {
                         setarNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
                         //seleciona o nivel
-                        if (nivel.nivel == response.data.nivel) {
-                            response.data.nivel_id=nivel.id
-                            //selecionar o nivel do desenvolvedor
-                            setarDesenvolvedor(response.data[0])
+                        if (typeof response.data.nivel_id!==null) {
+                            if (nivel.id == response.data.nivel_id.id) {
+                                response.data.nivel_id=nivel.id
+                                //selecionar o nivel do desenvolvedor
+                                setarDesenvolvedor(response.data)
+                            }
                         }
                     })
                 }).catch(error => {
@@ -113,7 +115,7 @@ function EditarDesenvolvedor() {
 
             const id = window.location.href.split('/')[5]
             Axios.patch(`http://localhost:3002/editar/desenvolvedor/${id}`, { 
-                    nivel: desenvolvedor.nivel_id, 
+                    nivel_id: desenvolvedor.nivel_id, 
                     nome: desenvolvedor.nome, 
                     sexo: desenvolvedor.sexo, 
                     datanascimento: dataNascimento, 

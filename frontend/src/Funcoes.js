@@ -72,3 +72,38 @@ export function formataData(data) {
     }
     return data;
 }
+
+
+export function converterDataNascimento(data){
+    data.forEach(element => {
+        if (element.datanascimento!=='0000-00-00') {
+            //formatar datanacimento em dd/mm/aaaa
+            console.log(element.datanascimento)
+
+            let dataNascimento=element.datanascimento
+
+            let dia = dataNascimento.split('-')[2];
+            let mes = dataNascimento.split('-')[1];
+            let ano = dataNascimento.split('-')[0];
+            element.datanascimento = dia + '/' + mes + '/' + ano;
+
+            element.idade = 0;
+            let anos = new Date().getFullYear() - new Date(dataNascimento).getFullYear();
+
+            if (new Date().getMonth() < new Date(dataNascimento).getMonth()) {
+                anos--;
+            } else if (new Date().getMonth() == new Date(dataNascimento).getMonth()) {
+                if (new Date().getDate() < new Date(dataNascimento).getDate()) {
+                    anos--;
+                }
+            }
+            
+            element.idade = anos;
+
+        } else {
+            element.datanascimento = 'Desconhecido';
+            element.idade = 0;
+        }
+    });
+    return data;
+}

@@ -3,6 +3,7 @@ import '../App.css'
 import { useHistory } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { converterDataNascimento } from '../Funcoes';
 
 function ListarDesenvolvedores() {
 
@@ -43,32 +44,7 @@ function ListarDesenvolvedores() {
                     .then(res => res.json())
                     .then(array => {
                         let data=array.desenvolvedores;
-                        data.forEach(element => {
-                            if (element.datanascimento!=='0000-00-00') {
-                                //formatar datanacimento em dd/mm/aaaa
-                                let dataNascimento = new Date(element.datanascimento);
-                                let dia = dataNascimento.getDate();
-                                let mes = dataNascimento.getMonth() + 1;
-                                let ano = dataNascimento.getFullYear();
-                                element.idade=0;
-                                if (typeof ano!=='undefined') {
-                                    //adicionar zero à esquerda no dia
-                                    if (dia<10) {
-                                        dia = '0' + dia;
-                                    }
-                                    //adicionar zero à esquerda no mês
-                                    if (mes<10) {
-                                        mes = '0' + mes;
-                                    }
-                                    element.datanascimento = dia + '/' + mes + '/' + ano;
-                                    //calcular idade
-                                    element.idade = new Date().getFullYear() - ano;
-                                }
-                            } else {
-                                element.datanascimento = 'Desconhecido';
-                                element.idade = 0;
-                            }
-                        });
+                        data=converterDataNascimento(data)
                         setarDesenvolvedorLista(data);
                         setarTotalDesenvolvedores(array.total);
                     }).catch(error => {
@@ -87,32 +63,7 @@ function ListarDesenvolvedores() {
                     .then(response => response.json())
                     .then(array => {
                         let data=array.desenvolvedores;
-                        data.forEach(element => {
-                            if (element.datanascimento!=='0000-00-00') {
-                                //formatar datanacimento em dd/mm/aaaa
-                                let dataNascimento = new Date(element.datanascimento);
-                                let dia = dataNascimento.getDate();
-                                let mes = dataNascimento.getMonth() + 1;
-                                let ano = dataNascimento.getFullYear();
-                                element.idade=0;
-                                if (typeof ano!=='undefined') {
-                                    //adicionar zero à esquerda no dia
-                                    if (dia<10) {
-                                        dia = '0' + dia;
-                                    }
-                                    //adicionar zero à esquerda no mês
-                                    if (mes<10) {
-                                        mes = '0' + mes;
-                                    }
-                                    element.datanascimento = dia + '/' + mes + '/' + ano;
-                                    //calcular idade
-                                    element.idade = new Date().getFullYear() - ano;
-                                }
-                            } else {
-                                element.datanascimento = 'Desconhecido';
-                                element.idade = 0;
-                            }
-                        });
+                        data=converterDataNascimento(data)
                         setarDesenvolvedorLista(data);
                         setarTotalDesenvolvedores(array.total);
                     }).catch(error => {
@@ -132,32 +83,7 @@ function ListarDesenvolvedores() {
             .then(response => response.json())
             .then(array => {
                 let data=array.desenvolvedores;
-                data.forEach(element => {
-                    if (element.datanascimento!=='0000-00-00') {
-                        //formatar datanacimento em dd/mm/aaaa
-                        let dataNascimento = new Date(element.datanascimento);
-                        let dia = dataNascimento.getDate();
-                        let mes = dataNascimento.getMonth() + 1;
-                        let ano = dataNascimento.getFullYear();
-                        element.idade=0;
-                        if (typeof ano!=='undefined') {
-                            //adicionar zero à esquerda no dia
-                            if (dia<10) {
-                                dia = '0' + dia;
-                            }
-                            //adicionar zero à esquerda no mês
-                            if (mes<10) {
-                                mes = '0' + mes;
-                            }
-                            element.datanascimento = dia + '/' + mes + '/' + ano;
-                            //calcular idade
-                            element.idade = new Date().getFullYear() - ano;
-                        }
-                    } else {
-                        element.datanascimento = 'Desconhecido';
-                        element.idade = 0;
-                    }
-                });
+                data=converterDataNascimento(data);
                 setarDesenvolvedorLista(data);
                 setarTotalDesenvolvedores(array.total);
             }).catch(error => {
