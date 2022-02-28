@@ -11,7 +11,7 @@ const PORT = 3002;
 
 let arrayDesenvolvedores = [
   //Eu
-  { nivel_id: 1, nome: 'Flávio Pavim', datanascimento:'28/03/1988', sexo:'m', hobby: 'Desenvolver softwares' },
+  { nivel_id: 17, nome: 'Flávio Pavim', datanascimento:'28/03/1988', sexo:'m', hobby: 'Desenvolver softwares' },
   //Dragon Ball
   { nivel_id: 2, nome: 'Goku', datanascimento:'26/12/1954', sexo:'m', hobby: 'Comer' },
   { nivel_id: 3, nome: 'Vegeta', datanascimento:'26/12/1954', sexo:'m', hobby: 'Lutar' },
@@ -89,6 +89,7 @@ async function bootstrap() {
   const niveis = await defaultConnection.getRepository(Niveis).find();
   if(niveis.length === 0){
     //inserir níveis no banco
+    arrayNiveis.reverse()
     for(let i = 0; i < arrayNiveis.length; i++){
       let nivel = new Niveis();
       nivel.nivel = arrayNiveis[i];

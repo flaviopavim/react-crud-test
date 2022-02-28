@@ -53,7 +53,7 @@ function EditarDesenvolvedor() {
                         setarNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
                         //seleciona o nivel
                         if (typeof response.data.nivel_id!==null) {
-                            if (nivel.id == response.data.nivel_id.id) {
+                            if (nivel.id === response.data.nivel_id.id) {
                                 response.data.nivel_id=nivel.id
                                 //selecionar o nivel do desenvolvedor
                                 setarDesenvolvedor(response.data)
