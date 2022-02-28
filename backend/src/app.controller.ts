@@ -14,7 +14,6 @@ export class AppController {
     return this.appService.helloWorld()
   }
 
-
   @Get('/listar/desenvolvedores')
   listarDesenvolvedores(): any {
     return this.appService.listarDesenvolvedores()
@@ -88,12 +87,23 @@ export class AppController {
         nivel_id: id
       }
     });
-    
+
     if (desenvolvedores) {
       return response.status(501).send({error:'Não foi possível excluir o nível. Existem desenvolvedores associados ao nível.'})
     } else {
-      this.appService.excluirNivel(id)
-      return response.status(200).send({error:'Excluído com sucesso'})
+      //verificar se existe algum nível com o id informado
+      const nivel = await defaultConnection.getRepository(Niveis).findOne({
+        where: {
+          id: id
+        }
+      });
+
+      if (nivel) {
+        await defaultConnection.getRepository(Niveis).delete(id);
+        return response.status(HttpStatus.OK).send({message: 'Nível excluído com sucesso!'})
+      } else {
+        return response.status(HttpStatus.NOT_FOUND).send({error:'Nível não encontrado.'})
+      }
     }
   }
 
