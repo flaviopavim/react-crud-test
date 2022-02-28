@@ -12,60 +12,100 @@ export class AppService {
     return 'Hello World!';
   }
 
-  //listar desenvolvedores
   async listarDesenvolvedores(): Promise<Desenvolvedores[]> {
-      const defaultConnection = getConnection();
-      const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).find();
-      return desenvolvedores;
+        const defaultConnection = getConnection();
+        const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).find({
+            relations: ["nivel_id"],
+            order: {
+                id: "DESC"
+            }
+        });
+        return desenvolvedores;
   }
 
   //listar desenvolvedores paginando
-  async listarDesenvolvedoresPaginacao(paginacao): Promise<Desenvolvedores[]> {
+  async listarDesenvolvedoresPaginacao(paginacao): Promise<any> {
       const defaultConnection = getConnection();
       const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).find({
-          skip: parseInt(paginacao)-1,
-          take: 10
+          relations: ["nivel_id"],
+          order: {
+            id: "DESC"
+          },
+          skip: (parseInt(paginacao)-1)*6,
+          take: 6
       });
-      return desenvolvedores;
+      //get total
+      const total = await defaultConnection.getRepository(Desenvolvedores).find();
+      
+      return {
+        total: total.length,
+        desenvolvedores:desenvolvedores
+      };
+      
   }
 
   //api/buscar/desenvolvedores/:busca/:paginacao
-  async buscarDesenvolvedores(@Param('busca') busca: string, @Param('paginacao') paginacao: string): Promise<Desenvolvedores[]> {
+  async buscarDesenvolvedores(@Param('busca') busca: string, @Param('paginacao') paginacao: string): Promise<any> {
       const defaultConnection = getConnection();
-
-      //buscar desenvolvedor where nome like '%busca%'
       const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).find({
           where: {
               nome: Like(`%${busca}%`),
-              nivel: Like(`%${busca}%`)
+              hobby: Like(`%${busca}%`)
           },
-          skip: parseInt(paginacao)-1,
-          take: 10
+          relations: ["nivel_id"],
+          order: {
+            id: "DESC"
+          },
+          skip: (parseInt(paginacao)-1)*6,
+          take: 6
       });
 
       
-      return desenvolvedores;
+      const total = await defaultConnection.getRepository(Desenvolvedores).find();
+      
+      return {
+        total: total.length,
+        desenvolvedores:desenvolvedores
+      };
   }
 
   //api/desenvolvedor/:id
   async buscarDesenvolvedor(@Param('id') id: number): Promise<Desenvolvedores> {
-      const defaultConnection = getConnection();
-      const desenvolvedor = await defaultConnection.getRepository(Desenvolvedores).findOne(id);
-      return desenvolvedor;
+
+    //trazer desenvolvedor e nivel
+    const defaultConnection = getConnection();
+    const desenvolvedor = await defaultConnection.getRepository(Desenvolvedores).findOne(id, {
+        relations: ["nivel_id"],
+        order: {
+          id: "DESC"
+        }
+    });
+
+    return desenvolvedor;
   }
 
   //api/cadastrar/desenvolvedor
   async cadastrarDesenvolvedor(desenvolvedor: Desenvolvedores): Promise<Desenvolvedores> {
       const defaultConnection = getConnection();
       const desenvolvedorCadastrado = await defaultConnection.getRepository(Desenvolvedores).save(desenvolvedor);
-      return desenvolvedorCadastrado;
+
+      //select desenvolvedor left join niveis
+      const desenvolvedorComNivel = await defaultConnection.getRepository(Desenvolvedores).findOne(desenvolvedorCadastrado.id, {
+        relations: ["nivel_id"]
+      });
+
+      
+      return desenvolvedorComNivel;
   }
 
   //api/editar/desenvolvedor/:id
   async editarDesenvolvedor(@Param('id') id: number, desenvolvedor: Desenvolvedores): Promise<any> {
       const defaultConnection = getConnection();
-      const desenvolvedorEditado = await defaultConnection.getRepository(Desenvolvedores).update(id, desenvolvedor);
-      return desenvolvedorEditado;
+      await defaultConnection.getRepository(Desenvolvedores).update(id, desenvolvedor);
+      const desenvolvedorComNivel = await defaultConnection.getRepository(Desenvolvedores).findOne(id, {
+        relations: ["nivel_id"]
+      });
+      return desenvolvedorComNivel;
   }
 
   //api/deletar/desenvolvedor/:id
@@ -86,31 +126,51 @@ export class AppService {
   //listar niveis
   async listarNiveis(): Promise<Niveis[]> {
       const defaultConnection = getConnection();
-      const niveis = await defaultConnection.getRepository(Niveis).find();
+      const niveis = await defaultConnection.getRepository(Niveis).find({
+          order: {
+            id: "DESC"
+          }
+      });
       return niveis;
   }
 
   //listar niveis com paginação
-  async listarNiveisPaginacao(@Param('paginacao') paginacao:string): Promise<Niveis[]> {
+  async listarNiveisPaginacao(@Param('paginacao') paginacao:string): Promise<any> {
     const defaultConnection = getConnection();
     const niveis = await defaultConnection.getRepository(Niveis).find({
-        skip: parseInt(paginacao)-1,
-        take: 10
+        order: {
+            id: "DESC"
+        },
+        skip: (parseInt(paginacao)-1)*6,
+        take: 6
     });
-    return niveis;
+    const total = await defaultConnection.getRepository(Niveis).find();
+      
+    return {
+      total: total.length,
+      niveis:niveis
+    };
   }
 
   //api/buscar/niveis/:busca/:paginacao
-  async buscarNiveis(@Param('busca') busca: string, @Param('paginacao') paginacao: string): Promise<Niveis[]> {
+  async buscarNiveis(@Param('busca') busca: string, @Param('paginacao') paginacao: string): Promise<any> {
       const defaultConnection = getConnection();
       const niveis = await defaultConnection.getRepository(Niveis).find({
           where: {
               nivel: Like(`%${busca}%`)
           },
-          skip: parseInt(paginacao)-1,
-          take: 10
+          order: {
+            id: "DESC"
+        },
+        skip: (parseInt(paginacao)-1)*6,
+        take: 6
       });
-      return niveis;
+      const total = await defaultConnection.getRepository(Niveis).find();
+      
+      return {
+        total: total.length,
+        niveis:niveis
+      };
   }
 
   //api/nivel/:id
@@ -139,19 +199,20 @@ export class AppService {
       const defaultConnection = getConnection()
 
       //verificar se algum desenvolvedor está associado ao nível
-      const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).find({
-          where: {
-              nivel: Like(`%${id}%`)
-          }
+      const desenvolvedores = await defaultConnection.getRepository(Desenvolvedores).findOne({
+        where: {
+          nivel_id: id
+        }
       });
 
-      if (desenvolvedores.length > 0) {
-          return {
-            message: 'Nível não pode ser excluído, pois existem desenvolvedores associados a ele'
-          }
+      //se existir desenvolvedor associado ao nível, não pode excluir
+      if (desenvolvedores) {
+        return {
+          message: 'Nível não pode ser excluído, pois existem desenvolvedores associados ao mesmo'
+        }
       } else {
-          const nivelExcluido = await defaultConnection.getRepository(Niveis).delete(id)
-          if (nivelExcluido.affected === 1) {
+        const nivelExcluido = await defaultConnection.getRepository(Niveis).delete(id);
+        if (nivelExcluido.affected === 1) {
             return {
               message: 'Nível excluído com sucesso'
             }

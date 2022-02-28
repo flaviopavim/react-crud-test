@@ -20,6 +20,7 @@ function ListarNiveis() {
 
     const [niveisList, setLevelList] = useState([]);
     const [busca, setarBusca] = useState('');
+    const [total_niveis, setarTotalNiveis] = useState(0);
     const [paginacao, setarPaginacao] = useState(1);
     const [excluir_id, setarExcluirID] = useState('');
     const [esconderMostrar, setarEsconderMostrar] = useState('hide');
@@ -40,8 +41,9 @@ function ListarNiveis() {
                 setarPaginacao(historico.location.pathname.split("/")[4])
                 fetch(`http://localhost:3002/buscar/niveis/${busca_}/${paginacao}`)
                     .then(res => res.json())
-                    .then(data => {
-                        setLevelList(data);
+                    .then(array => {
+                        setLevelList(array.niveis)
+                        setarTotalNiveis(array.total)
                     }).catch(err => {
                         toast.error("Erro ao buscar níveis")
                     })
@@ -56,8 +58,9 @@ function ListarNiveis() {
                 setarPaginacao(historico.location.pathname.split("/")[3])
                 fetch(`http://localhost:3002/listar/niveis/${paginacao}`)
                     .then(response => response.json())
-                    .then(data => {
-                        setLevelList(data);
+                    .then(array => {
+                        setLevelList(array.niveis)
+                        setarTotalNiveis(array.total)
                     }).catch(err => {
                         toast.error("Erro ao listar níveis")
                     })
@@ -77,8 +80,9 @@ function ListarNiveis() {
             } else {
                 fetch(`http://localhost:3002/listar/niveis/${paginacao}`)
                 .then(response => response.json())
-                .then(data => {
-                    setLevelList(data)
+                .then(array => {
+                    setLevelList(array.niveis)
+                    setarTotalNiveis(array.total)
                     toast.success('Nível excluído com sucesso')
                 }).catch(error => {
                     toast.error('Não foi possível excluir o nível')
@@ -112,10 +116,7 @@ function ListarNiveis() {
         historico.push(`/listar/niveis/${paginacao}`);
     }
 
-    let links=0
-    if (niveisList.length>0) {
-        links = Math.ceil(niveisList[0].total/6);
-    }
+    let links=Math.ceil(total_niveis/6);
 
     let paginas=[];
     for (let i=1; i<=links; i++) {

@@ -13,6 +13,7 @@ export class AppController {
     return this.appService.helloWorld()
   }
 
+
   @Get('/listar/desenvolvedores')
   listarDesenvolvedores(): any {
     return this.appService.listarDesenvolvedores()

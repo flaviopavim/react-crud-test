@@ -20,6 +20,7 @@ function ListarDesenvolvedores() {
 
     const [desenvolvedoresLista, setarDesenvolvedorLista] = useState([]);
     const [busca, setarBusca] = useState('');
+    const [total_desenvolvedores, setarTotalDesenvolvedores] = useState(0);
     const [paginacao, setarPaginacao] = useState(1);
     const [excluir_id, setarExcluirID] = useState('');
     const [esconderMorstrar, setarEsconderMostrar] = useState('hide');
@@ -40,34 +41,8 @@ function ListarDesenvolvedores() {
                 setarPaginacao(historico.location.pathname.split("/")[4])
                 fetch(`http://localhost:3002/buscar/desenvolvedores/${busca_}/${paginacao}`)
                     .then(res => res.json())
-                    .then(data => {
-                        setarDesenvolvedorLista(data);
-                    }).catch(error => {
-                        toast.error('Erro ao buscar desenvolvedores')
-                    })
-            }
-        } else {
-            if (typeof historico.location.pathname.split("/")[3]==='undefined' || 
-                historico.location.pathname.split("/")[3]==='' ||
-                historico.location.pathname.split("/")[3]===0
-            ) {
-                historico.push(`/listar/desenvolvedores/1`)
-            } else {
-                setarPaginacao(historico.location.pathname.split("/")[3])
-                fetch(`http://localhost:3002/listar/desenvolvedores/${paginacao}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('-----------------------')
-                        console.log('-----------------------')
-                        console.log('-----------------------')
-                        console.log('-----------------------')
-                        console.log('-----------------------')
-                        console.log(data)
-                        console.log('-----------------------')
-                        console.log('-----------------------')
-                        console.log('-----------------------')
-                        console.log('-----------------------')
-                        console.log('-----------------------')
+                    .then(array => {
+                        let data=array.desenvolvedores;
                         data.forEach(element => {
                             if (element.datanascimento!=='0000-00-00') {
                                 //formatar datanacimento em dd/mm/aaaa
@@ -94,8 +69,52 @@ function ListarDesenvolvedores() {
                                 element.idade = 0;
                             }
                         });
-                        
                         setarDesenvolvedorLista(data);
+                        setarTotalDesenvolvedores(array.total);
+                    }).catch(error => {
+                        toast.error('Erro ao buscar desenvolvedores')
+                    })
+            }
+        } else {
+            if (typeof historico.location.pathname.split("/")[3]==='undefined' || 
+                historico.location.pathname.split("/")[3]==='' ||
+                historico.location.pathname.split("/")[3]===0
+            ) {
+                historico.push(`/listar/desenvolvedores/1`)
+            } else {
+                setarPaginacao(historico.location.pathname.split("/")[3])
+                fetch(`http://localhost:3002/listar/desenvolvedores/${paginacao}`)
+                    .then(response => response.json())
+                    .then(array => {
+                        let data=array.desenvolvedores;
+                        data.forEach(element => {
+                            if (element.datanascimento!=='0000-00-00') {
+                                //formatar datanacimento em dd/mm/aaaa
+                                let dataNascimento = new Date(element.datanascimento);
+                                let dia = dataNascimento.getDate();
+                                let mes = dataNascimento.getMonth() + 1;
+                                let ano = dataNascimento.getFullYear();
+                                element.idade=0;
+                                if (typeof ano!=='undefined') {
+                                    //adicionar zero à esquerda no dia
+                                    if (dia<10) {
+                                        dia = '0' + dia;
+                                    }
+                                    //adicionar zero à esquerda no mês
+                                    if (mes<10) {
+                                        mes = '0' + mes;
+                                    }
+                                    element.datanascimento = dia + '/' + mes + '/' + ano;
+                                    //calcular idade
+                                    element.idade = new Date().getFullYear() - ano;
+                                }
+                            } else {
+                                element.datanascimento = 'Desconhecido';
+                                element.idade = 0;
+                            }
+                        });
+                        setarDesenvolvedorLista(data);
+                        setarTotalDesenvolvedores(array.total);
                     }).catch(error => {
                         toast.error("Erro ao listar desenvolvedores")
                     });
@@ -111,8 +130,36 @@ function ListarDesenvolvedores() {
             toast.success("Desenvolvedor excluído com sucesso!");
             fetch(`http://localhost:3002/listar/desenvolvedores/${paginacao}`)
             .then(response => response.json())
-            .then(data => {
-                setarDesenvolvedorLista(data)
+            .then(array => {
+                let data=array.desenvolvedores;
+                data.forEach(element => {
+                    if (element.datanascimento!=='0000-00-00') {
+                        //formatar datanacimento em dd/mm/aaaa
+                        let dataNascimento = new Date(element.datanascimento);
+                        let dia = dataNascimento.getDate();
+                        let mes = dataNascimento.getMonth() + 1;
+                        let ano = dataNascimento.getFullYear();
+                        element.idade=0;
+                        if (typeof ano!=='undefined') {
+                            //adicionar zero à esquerda no dia
+                            if (dia<10) {
+                                dia = '0' + dia;
+                            }
+                            //adicionar zero à esquerda no mês
+                            if (mes<10) {
+                                mes = '0' + mes;
+                            }
+                            element.datanascimento = dia + '/' + mes + '/' + ano;
+                            //calcular idade
+                            element.idade = new Date().getFullYear() - ano;
+                        }
+                    } else {
+                        element.datanascimento = 'Desconhecido';
+                        element.idade = 0;
+                    }
+                });
+                setarDesenvolvedorLista(data);
+                setarTotalDesenvolvedores(array.total);
             }).catch(error => {
                 toast.error('Erro ao excluir desenvolvedor')
             });
@@ -155,10 +202,7 @@ function ListarDesenvolvedores() {
     
     }
 
-    let links=0
-    if (desenvolvedoresLista.length>0) {
-        links = Math.ceil(desenvolvedoresLista[0].total/6);
-    }
+    let links= Math.ceil(total_desenvolvedores/6)
 
     let paginas=[];
     for (let i=1; i<=links; i++) {
@@ -191,13 +235,20 @@ function ListarDesenvolvedores() {
         } else {
             str_sexo='Desconhecido'
         }
+        
+        let nivel=''
+        if (developer['nivel_id']!==null) {
+            nivel=developer['nivel_id']['nivel']
+        }
+
 
         return (
             <div key={key} className="col-md-4">
                 <div className="box">
                     <i className="glyphicon glyphicon-remove" onClick={() => showModal(developer.id)}></i>
                     <i className="glyphicon glyphicon-pencil" onClick={() => manipularEdicao(developer.id)}></i>
-                    <div><strong>Nível:</strong> {developer.nivel}</div>
+                    <div><strong>ID:</strong> {developer.id}</div>
+                    <div><strong>Nível:</strong> {nivel}</div>
                     <div><strong>Nome:</strong> {developer.nome}</div>
                     <div><strong>Sexo:</strong> {str_sexo}</div>
                     <div><strong>Data de nascimento:</strong> {developer.datanascimento}{str_idade}</div>
@@ -209,6 +260,7 @@ function ListarDesenvolvedores() {
     }
     )
 
+    
     return (
         <div className="container">
             <div className={"myModalBG "+esconderMorstrar}>

@@ -39,12 +39,12 @@ function EditarDesenvolvedor() {
             .then(response => {
               
                 //formata data de nascimento para dd/mm/yyyy
-                let data = response.data[0].datanascimento
+                let data = response.data.datanascimento
                 data = data.substring(8, 10) + '/' + data.substring(5, 7) + '/' + data.substring(0, 4)
-                response.data[0].datanascimento = data
+                response.data.datanascimento = data
 
                 //setar dados do desenvolvedor
-                setarDesenvolvedor(response.data[0])
+                setarDesenvolvedor(response.data)
 
                 //busca todos os niveis para o select
                 Axios.get('http://localhost:3002/listar/niveis/todos').then(response2 => {
@@ -52,8 +52,8 @@ function EditarDesenvolvedor() {
                     response2.data.forEach(nivel => {
                         setarNiveis(niveis => [...niveis, { value: nivel.id, label: nivel.nivel }])
                         //seleciona o nivel
-                        if (nivel.nivel == response.data[0].nivel) {
-                            response.data[0].nivel_id=nivel.id
+                        if (nivel.nivel == response.data.nivel) {
+                            response.data.nivel_id=nivel.id
                             //selecionar o nivel do desenvolvedor
                             setarDesenvolvedor(response.data[0])
                         }
@@ -62,7 +62,7 @@ function EditarDesenvolvedor() {
                     toast.error("Erro ao listar os níveis")
                 })
             }).catch(error => {
-                toast.error("Erro ao listar os desenvolvedor")
+                toast.error("Erro ao listar desenvolvedor")
             })
 
     }, [historico.location.pathname])

@@ -8,12 +8,6 @@ import { Niveis } from './../src/niveis.entity';
 
 const PORT = 3002;
 
-//const express = require('express')
-//const cors = require('cors')
-//const app = express();
-//app.use(cors());
-//app.use(express.json())
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
