@@ -104,7 +104,9 @@ async function bootstrap() {
     for(let i = 0; i < arrayDesenvolvedores.length; i++){
       let desenvolvedor = new Desenvolvedores();
       desenvolvedor.nome = arrayDesenvolvedores[i].nome;
-      desenvolvedor.datanascimento = arrayDesenvolvedores[i].datanascimento;
+      //converter data de nascimento
+      let data = arrayDesenvolvedores[i].datanascimento.split('/');
+      desenvolvedor.datanascimento = data[2] + '-' + data[1] + '-' + data[0];
       desenvolvedor.sexo = arrayDesenvolvedores[i].sexo;
       desenvolvedor.hobby = arrayDesenvolvedores[i].hobby;
       //buscar nivel
