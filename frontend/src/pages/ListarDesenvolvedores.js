@@ -30,7 +30,7 @@ function ListarDesenvolvedores() {
         let acao = historico.location.pathname.split("/")[1];
         let tabela = historico.location.pathname.split("/")[2];
         let busca_ = historico.location.pathname.split("/")[3];
-        setarPaginacao(1)
+        //setarPaginacao(1)
         if (acao==='buscar' && tabela==='desenvolvedores' && typeof busca_!=='undefined') {
             setarBusca(busca_)
             if (typeof historico.location.pathname.split("/")[4]==='undefined' || 
@@ -39,7 +39,7 @@ function ListarDesenvolvedores() {
             ) {
                 historico.push(`/buscar/desenvolvedores/${busca_}/1`)
             } else {
-                setarPaginacao(historico.location.pathname.split("/")[4])
+                //setarPaginacao(historico.location.pathname.split("/")[4])
                 fetch(`http://localhost:3002/buscar/desenvolvedores/${busca_}/${paginacao}`)
                     .then(res => res.json())
                     .then(array => {
@@ -58,7 +58,7 @@ function ListarDesenvolvedores() {
             ) {
                 historico.push(`/listar/desenvolvedores/1`)
             } else {
-                setarPaginacao(historico.location.pathname.split("/")[3])
+                //setarPaginacao(historico.location.pathname.split("/")[3])
                 fetch(`http://localhost:3002/listar/desenvolvedores/${paginacao}`)
                     .then(response => response.json())
                     .then(array => {
@@ -128,7 +128,7 @@ function ListarDesenvolvedores() {
     
     }
 
-    let links= Math.ceil(total_desenvolvedores/6)
+    let links=Math.ceil(total_desenvolvedores/6)
 
     let paginas=[];
     for (let i=1; i<=links; i++) {
