@@ -75,7 +75,7 @@ async function bootstrap() {
     port: 3306,
     username: "root",
     password: "",
-    database: "new",
+    database: "react_test",
     entities: [
         Desenvolvedores,
         Niveis,
